@@ -3,171 +3,765 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="IPM project landing page by BIMfabrik." />
-  <title>IPM | BIMfabrik</title>
+  <meta name="description" content="IPM triplestore visualization and editable source tables." />
+  <title>IPM | Triplestore Prototype</title>
   <style>
     :root {
       color-scheme: light dark;
       --bg: #f5f5f7;
-      --panel: rgba(255, 255, 255, 0.78);
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: #ffffff;
       --text: #1d1d1f;
       --muted: #6e6e73;
-      --line: rgba(0, 0, 0, 0.08);
+      --line: rgba(0, 0, 0, 0.10);
+      --line-strong: rgba(0, 0, 0, 0.18);
       --accent: #0a84ff;
+      --accent-soft: rgba(10, 132, 255, 0.12);
+      --good: #248a3d;
       --shadow: 0 24px 80px rgba(0, 0, 0, 0.10);
+      --radius: 24px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #050505;
-        --panel: rgba(28, 28, 30, 0.78);
+        --panel: rgba(28, 28, 30, 0.82);
+        --panel-strong: #1c1c1e;
         --text: #f5f5f7;
         --muted: #a1a1a6;
-        --line: rgba(255, 255, 255, 0.12);
+        --line: rgba(255, 255, 255, 0.13);
+        --line-strong: rgba(255, 255, 255, 0.24);
         --accent: #64d2ff;
+        --accent-soft: rgba(100, 210, 255, 0.14);
+        --good: #30d158;
         --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
       }
     }
 
     * { box-sizing: border-box; }
 
+    html,
     body {
+      height: 100%;
       margin: 0;
-      min-height: 100vh;
+    }
+
+    body {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(10, 132, 255, 0.16), transparent 32rem),
-        radial-gradient(circle at bottom right, rgba(48, 209, 88, 0.10), transparent 30rem),
+        radial-gradient(circle at top left, rgba(10, 132, 255, 0.16), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(48, 209, 88, 0.10), transparent 34rem),
         var(--bg);
-      display: grid;
-      place-items: center;
-      padding: 32px;
+      overflow: hidden;
     }
 
-    main {
-      width: min(100%, 980px);
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+
+    button:hover,
+    button[aria-selected="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .app {
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: 2fr 1fr;
+      padding: 18px;
+      gap: 14px;
+    }
+
+    .graph-panel,
+    .data-panel {
+      min-height: 0;
       border: 1px solid var(--line);
       background: var(--panel);
       backdrop-filter: blur(24px);
-      border-radius: 32px;
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    .hero {
-      padding: clamp(32px, 7vw, 80px);
+    .graph-panel {
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
 
-    .eyebrow {
-      margin: 0 0 18px;
-      color: var(--accent);
+    .topbar,
+    .tablebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .brand span,
+    .meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .search {
+      width: min(280px, 34vw);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 9px 13px;
+      outline: none;
+    }
+
+    .search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .graph-wrap {
+      position: relative;
+      min-height: 0;
+    }
+
+    #graph {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .edge {
+      stroke: var(--line-strong);
+      stroke-width: 1.6;
+    }
+
+    .edge-label {
+      fill: var(--muted);
+      font-size: 11px;
+      font-family: var(--mono);
+      paint-order: stroke;
+      stroke: var(--panel-strong);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+
+    .node circle {
+      stroke: var(--panel-strong);
+      stroke-width: 3;
+    }
+
+    .node text {
+      fill: var(--text);
       font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 12px;
+      paint-order: stroke;
+      stroke: var(--panel-strong);
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
+
+    .node .type {
+      fill: var(--muted);
+      font-size: 10px;
+      font-family: var(--mono);
+      font-weight: 500;
+    }
+
+    .legend {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      pointer-events: none;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .data-panel {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab {
+      white-space: nowrap;
+    }
+
+    .tablebar {
+      padding-block: 10px;
+    }
+
+    .table-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .table-title strong {
+      font-size: 0.95rem;
+    }
+
+    .table-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .table-wrap {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 980px;
+      background: transparent;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--panel-strong);
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    td[contenteditable="true"] {
+      outline: none;
+    }
+
+    td[contenteditable="true"]:focus {
+      background: var(--accent-soft);
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+
+    .row-actions {
+      width: 84px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .small-btn {
+      padding: 6px 9px;
       font-size: 0.78rem;
     }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(2.6rem, 8vw, 6rem);
-      line-height: 0.95;
-      letter-spacing: -0.07em;
+    .status {
+      color: var(--good);
+      font-size: 0.82rem;
+      min-width: 84px;
+      text-align: right;
     }
 
-    .lead {
-      max-width: 680px;
-      margin: 26px 0 0;
-      color: var(--muted);
-      font-size: clamp(1.05rem, 2vw, 1.35rem);
-      line-height: 1.55;
-    }
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .app {
+        min-height: 100dvh;
+        height: auto;
+        grid-template-rows: 62dvh minmax(360px, 1fr);
+        padding: 10px;
+        gap: 10px;
+      }
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      border-top: 1px solid var(--line);
-    }
+      .topbar,
+      .tablebar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
 
-    .card {
-      padding: 28px;
-      border-right: 1px solid var(--line);
-      min-height: 160px;
-    }
+      .toolbar {
+        justify-content: flex-start;
+        width: 100%;
+      }
 
-    .card:last-child { border-right: 0; }
+      .search {
+        width: 100%;
+      }
 
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-      letter-spacing: -0.01em;
-    }
+      .brand {
+        flex-direction: column;
+        gap: 2px;
+      }
 
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 0.98rem;
-    }
-
-    footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--line);
-      padding: 22px 28px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    a {
-      color: inherit;
-      text-underline-offset: 4px;
-    }
-
-    @media (max-width: 760px) {
-      body { padding: 18px; }
-      main { border-radius: 24px; }
-      .cards { grid-template-columns: 1fr; }
-      .card { border-right: 0; border-bottom: 1px solid var(--line); }
-      .card:last-child { border-bottom: 0; }
+      .legend {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <section class="hero" aria-labelledby="page-title">
-      <p class="eyebrow">BIMfabrik</p>
-      <h1 id="page-title">IPM</h1>
-      <p class="lead">
-        A lightweight project landing page for IPM. This repository is prepared for GitHub Pages deployment from the main branch.
-      </p>
+  <main class="app">
+    <section class="graph-panel" aria-label="Triplestore visualization">
+      <header class="topbar">
+        <div class="brand">
+          <strong>IPM Triplestore</strong>
+          <span>RDF source graph from editable tables</span>
+        </div>
+        <div class="toolbar">
+          <input id="graphSearch" class="search" type="search" placeholder="Filter graph nodes..." />
+          <button id="resetData" type="button">Reset demo data</button>
+          <span id="graphMeta" class="meta"></span>
+        </div>
+      </header>
+      <div class="graph-wrap">
+        <svg id="graph" role="img" aria-label="RDF graph visualization"></svg>
+        <div class="legend" aria-hidden="true">
+          <span class="chip"><span class="dot" style="background:#0a84ff"></span>Use cases</span>
+          <span class="chip"><span class="dot" style="background:#30d158"></span>Products</span>
+          <span class="chip"><span class="dot" style="background:#ff9f0a"></span>Inputs / Outputs</span>
+          <span class="chip"><span class="dot" style="background:#bf5af2"></span>Processes</span>
+        </div>
+      </div>
     </section>
 
-    <section class="cards" aria-label="Project overview">
-      <article class="card">
-        <h2>Default page</h2>
-        <p>Static, fast, responsive and ready to replace with project-specific content.</p>
-      </article>
-      <article class="card">
-        <h2>GitHub Pages</h2>
-        <p>Configured with a Pages workflow using the official GitHub Actions deployment path.</p>
-      </article>
-      <article class="card">
-        <h2>Next step</h2>
-        <p>Add tables, project metadata, Airtable sync, or app documentation when the IPM structure is defined.</p>
-      </article>
+    <section class="data-panel" aria-label="Source tables">
+      <nav id="tabs" class="tabs" aria-label="Source table tabs"></nav>
+      <div class="tablebar">
+        <div class="table-title">
+          <strong id="activeTitle"></strong>
+          <span id="activeDescription"></span>
+        </div>
+        <div class="toolbar">
+          <button id="addRow" type="button">Add row</button>
+          <button id="exportJson" type="button">Export JSON</button>
+          <span id="saveStatus" class="status">Saved</span>
+        </div>
+      </div>
+      <div id="tableWrap" class="table-wrap"></div>
     </section>
-
-    <footer>
-      <span>© <span id="year"></span> BIMfabrik</span>
-      <a href="https://github.com/BIMfabrik/ipm">GitHub repository</a>
-    </footer>
   </main>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    const STORAGE_KEY = 'ipm-source-tables-v1';
+
+    const colors = {
+      usecases: '#0a84ff',
+      products: '#30d158',
+      inputsOutputs: '#ff9f0a',
+      processes: '#bf5af2',
+      actors: '#ff453a',
+      evidence: '#8e8e93'
+    };
+
+    const defaultTables = {
+      usecases: {
+        label: 'Use cases',
+        description: 'First source table: practical BIM / digital building use cases to become RDF subjects.',
+        columns: ['id', 'name', 'description', 'process', 'product', 'input', 'output', 'priority'],
+        rows: [
+          { id: 'UC-001', name: 'BIM model quality check', description: 'Validate IFC models against project rules before handover.', process: 'Model checking', product: 'Solibri', input: 'IFC model', output: 'Issue report', priority: 'High' },
+          { id: 'UC-002', name: 'BIM2FM asset handover', description: 'Prepare asset data for operation and CAFM import.', process: 'Data handover', product: 'dRofus', input: 'Room and asset data', output: 'FM data package', priority: 'High' },
+          { id: 'UC-003', name: 'Digital twin portfolio view', description: 'Connect building data, systems and operational indicators.', process: 'Portfolio analytics', product: 'Power BI', input: 'Asset registry', output: 'Portfolio dashboard', priority: 'Medium' }
+        ]
+      },
+      products: {
+        label: 'Products',
+        description: 'Tools, platforms and systems that support the source use cases.',
+        columns: ['id', 'name', 'type', 'vendor', 'role', 'integration'],
+        rows: [
+          { id: 'PR-001', name: 'Solibri', type: 'Model checker', vendor: 'Nemetschek', role: 'Rule-based model validation', integration: 'BCF / IFC' },
+          { id: 'PR-002', name: 'dRofus', type: 'Data management', vendor: 'dRofus', role: 'Room and asset information', integration: 'API / Excel / IFC' },
+          { id: 'PR-003', name: 'Power BI', type: 'Analytics', vendor: 'Microsoft', role: 'Portfolio reporting', integration: 'CSV / SQL / API' }
+        ]
+      },
+      inputsOutputs: {
+        label: 'Inputs / Outputs',
+        description: 'Information objects used as RDF resources and table references.',
+        columns: ['id', 'name', 'kind', 'format', 'owner', 'qualityRule'],
+        rows: [
+          { id: 'IO-001', name: 'IFC model', kind: 'Input', format: 'IFC4 / IFC2x3', owner: 'Planner', qualityRule: 'Must pass model rules' },
+          { id: 'IO-002', name: 'Issue report', kind: 'Output', format: 'BCF / XLSX / PDF', owner: 'BIM coordination', qualityRule: 'Traceable by element and rule' },
+          { id: 'IO-003', name: 'FM data package', kind: 'Output', format: 'XLSX / CAFM import', owner: 'Operator', qualityRule: 'Complete asset attributes' },
+          { id: 'IO-004', name: 'Asset registry', kind: 'Input', format: 'SQL / XLSX', owner: 'Portfolio management', qualityRule: 'Unique IDs and lifecycle status' }
+        ]
+      },
+      processes: {
+        label: 'Processes',
+        description: 'Business and project processes connected to use cases, products and data objects.',
+        columns: ['id', 'name', 'phase', 'owner', 'kpi', 'evidence'],
+        rows: [
+          { id: 'PC-001', name: 'Model checking', phase: 'Design / construction', owner: 'BIM coordination', kpi: 'Open issues by severity', evidence: 'BCF report' },
+          { id: 'PC-002', name: 'Data handover', phase: 'Handover', owner: 'BIM2FM lead', kpi: 'Attribute completeness', evidence: 'Handover checklist' },
+          { id: 'PC-003', name: 'Portfolio analytics', phase: 'Operation', owner: 'Asset management', kpi: 'Data coverage by building', evidence: 'Dashboard export' }
+        ]
+      },
+      actors: {
+        label: 'Actors',
+        description: 'Stakeholders, responsible roles and data owners.',
+        columns: ['id', 'name', 'role', 'organization', 'responsibility'],
+        rows: [
+          { id: 'AC-001', name: 'BIM coordination', role: 'Quality owner', organization: 'Project', responsibility: 'Rules, BCF, coordination' },
+          { id: 'AC-002', name: 'Operator', role: 'Data receiver', organization: 'Facility management', responsibility: 'Operate CAFM-ready data' },
+          { id: 'AC-003', name: 'Asset management', role: 'Portfolio owner', organization: 'Client', responsibility: 'Evaluate portfolio KPIs' }
+        ]
+      }
+    };
+
+    let tables = loadTables();
+    let activeKey = 'usecases';
+    let sortState = { column: null, direction: 1 };
+
+    const tabsEl = document.getElementById('tabs');
+    const tableWrap = document.getElementById('tableWrap');
+    const activeTitle = document.getElementById('activeTitle');
+    const activeDescription = document.getElementById('activeDescription');
+    const saveStatus = document.getElementById('saveStatus');
+    const graphSearch = document.getElementById('graphSearch');
+    const graphMeta = document.getElementById('graphMeta');
+
+    function loadTables() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : structuredClone(defaultTables);
+      } catch (error) {
+        console.warn('Failed to load stored tables. Falling back to defaults.', error);
+        return structuredClone(defaultTables);
+      }
+    }
+
+    function saveTables() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
+      saveStatus.textContent = 'Saved';
+      window.clearTimeout(saveTables.timeout);
+      saveTables.timeout = window.setTimeout(() => saveStatus.textContent = 'Saved', 900);
+      renderGraph();
+    }
+
+    function markDirty() {
+      saveStatus.textContent = 'Saving...';
+      window.clearTimeout(markDirty.timeout);
+      markDirty.timeout = window.setTimeout(saveTables, 250);
+    }
+
+    function renderTabs() {
+      tabsEl.innerHTML = '';
+      Object.entries(tables).forEach(([key, table]) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab';
+        btn.type = 'button';
+        btn.textContent = table.label;
+        btn.setAttribute('aria-selected', String(key === activeKey));
+        btn.addEventListener('click', () => {
+          activeKey = key;
+          sortState = { column: null, direction: 1 };
+          renderTabs();
+          renderTable();
+        });
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    function renderTable() {
+      const table = tables[activeKey];
+      activeTitle.textContent = table.label;
+      activeDescription.textContent = table.description;
+
+      const html = `
+        <table>
+          <thead>
+            <tr>
+              ${table.columns.map(column => `<th data-column="${escapeHtml(column)}">${escapeHtml(column)}${sortState.column === column ? (sortState.direction === 1 ? ' ↑' : ' ↓') : ''}</th>`).join('')}
+              <th class="row-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${table.rows.map((row, rowIndex) => `
+              <tr>
+                ${table.columns.map(column => `<td contenteditable="true" data-row="${rowIndex}" data-column="${escapeHtml(column)}">${escapeHtml(row[column] ?? '')}</td>`).join('')}
+                <td class="row-actions"><button class="small-btn" type="button" data-delete="${rowIndex}">Delete</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      tableWrap.innerHTML = html;
+
+      tableWrap.querySelectorAll('th[data-column]').forEach(th => {
+        th.addEventListener('click', () => sortTable(th.dataset.column));
+      });
+
+      tableWrap.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
+        cell.addEventListener('input', () => {
+          const rowIndex = Number(cell.dataset.row);
+          const column = cell.dataset.column;
+          tables[activeKey].rows[rowIndex][column] = cell.textContent.trim();
+          markDirty();
+        });
+      });
+
+      tableWrap.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rowIndex = Number(btn.dataset.delete);
+          tables[activeKey].rows.splice(rowIndex, 1);
+          saveTables();
+          renderTable();
+        });
+      });
+    }
+
+    function sortTable(column) {
+      if (sortState.column === column) {
+        sortState.direction *= -1;
+      } else {
+        sortState = { column, direction: 1 };
+      }
+
+      tables[activeKey].rows.sort((a, b) => {
+        const av = String(a[column] ?? '').toLowerCase();
+        const bv = String(b[column] ?? '').toLowerCase();
+        return av.localeCompare(bv, undefined, { numeric: true }) * sortState.direction;
+      });
+
+      saveTables();
+      renderTable();
+    }
+
+    function addRow() {
+      const table = tables[activeKey];
+      const row = Object.fromEntries(table.columns.map(column => [column, '']));
+      row.id = `${activeKey.slice(0, 2).toUpperCase()}-${String(table.rows.length + 1).padStart(3, '0')}`;
+      table.rows.push(row);
+      saveTables();
+      renderTable();
+    }
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(tables, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ipm-source-tables.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetData() {
+      tables = structuredClone(defaultTables);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
+      renderTabs();
+      renderTable();
+      renderGraph();
+    }
+
+    function buildGraph() {
+      const nodes = new Map();
+      const edges = [];
+
+      function addNode(id, label, type, color) {
+        if (!label) return null;
+        const nodeId = `${type}:${label}`;
+        if (!nodes.has(nodeId)) {
+          nodes.set(nodeId, { id: nodeId, label, type, color, links: 0 });
+        }
+        return nodeId;
+      }
+
+      function addEdge(source, target, predicate) {
+        if (!source || !target || source === target) return;
+        edges.push({ source, target, predicate });
+        nodes.get(source).links += 1;
+        nodes.get(target).links += 1;
+      }
+
+      tables.usecases.rows.forEach(row => {
+        const usecase = addNode(row.name || row.id, row.name || row.id, 'usecase', colors.usecases);
+        const product = addNode(row.product, row.product, 'product', colors.products);
+        const input = addNode(row.input, row.input, 'input', colors.inputsOutputs);
+        const output = addNode(row.output, row.output, 'output', colors.inputsOutputs);
+        const process = addNode(row.process, row.process, 'process', colors.processes);
+
+        addEdge(usecase, process, 'belongsToProcess');
+        addEdge(usecase, product, 'usesProduct');
+        addEdge(input, usecase, 'feedsUseCase');
+        addEdge(usecase, output, 'produces');
+      });
+
+      tables.processes.rows.forEach(row => {
+        const process = addNode(row.name || row.id, row.name || row.id, 'process', colors.processes);
+        const owner = addNode(row.owner, row.owner, 'actor', colors.actors);
+        const evidence = addNode(row.evidence, row.evidence, 'evidence', colors.evidence);
+        addEdge(process, owner, 'ownedBy');
+        addEdge(process, evidence, 'documentedBy');
+      });
+
+      return { nodes: Array.from(nodes.values()), edges };
+    }
+
+    function renderGraph() {
+      const svg = document.getElementById('graph');
+      const rect = svg.getBoundingClientRect();
+      const width = Math.max(rect.width || 900, 320);
+      const height = Math.max(rect.height || 420, 260);
+      const filter = graphSearch.value.trim().toLowerCase();
+      const graph = buildGraph();
+
+      let nodes = graph.nodes;
+      let edges = graph.edges;
+
+      if (filter) {
+        const keep = new Set(nodes.filter(node => node.label.toLowerCase().includes(filter) || node.type.includes(filter)).map(node => node.id));
+        edges = edges.filter(edge => keep.has(edge.source) || keep.has(edge.target));
+        edges.forEach(edge => { keep.add(edge.source); keep.add(edge.target); });
+        nodes = nodes.filter(node => keep.has(node.id));
+      }
+
+      const nodeIndex = new Map(nodes.map((node, index) => [node.id, { ...node, index }]));
+      const center = { x: width / 2, y: height / 2 };
+      const radius = Math.min(width, height) * 0.36;
+      const typeOrder = ['usecase', 'process', 'product', 'input', 'output', 'actor', 'evidence'];
+
+      nodes.forEach((node, i) => {
+        const typeOffset = typeOrder.indexOf(node.type) * 0.44;
+        const angle = (i / Math.max(nodes.length, 1)) * Math.PI * 2 + typeOffset;
+        const weight = Math.min(node.links, 6) / 6;
+        node.x = center.x + Math.cos(angle) * radius * (0.55 + weight * 0.55);
+        node.y = center.y + Math.sin(angle) * radius * (0.55 + weight * 0.55);
+        node.r = 12 + Math.min(node.links, 6) * 2.4;
+        nodeIndex.set(node.id, node);
+      });
+
+      const edgeMarkup = edges.map(edge => {
+        const s = nodeIndex.get(edge.source);
+        const t = nodeIndex.get(edge.target);
+        if (!s || !t) return '';
+        const mx = (s.x + t.x) / 2;
+        const my = (s.y + t.y) / 2;
+        return `
+          <line class="edge" x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" />
+          <text class="edge-label" x="${mx}" y="${my}">${escapeHtml(edge.predicate)}</text>
+        `;
+      }).join('');
+
+      const nodeMarkup = nodes.map(node => `
+        <g class="node" transform="translate(${node.x},${node.y})">
+          <circle r="${node.r}" fill="${node.color}" opacity="0.92"></circle>
+          <text y="${node.r + 16}" text-anchor="middle">${escapeHtml(shortLabel(node.label, 24))}</text>
+          <text class="type" y="${node.r + 31}" text-anchor="middle">${escapeHtml(node.type)}</text>
+        </g>
+      `).join('');
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.innerHTML = `<g>${edgeMarkup}</g><g>${nodeMarkup}</g>`;
+      graphMeta.textContent = `${nodes.length} nodes · ${edges.length} triples`;
+    }
+
+    function shortLabel(value, max) {
+      const text = String(value ?? '');
+      return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    document.getElementById('addRow').addEventListener('click', addRow);
+    document.getElementById('exportJson').addEventListener('click', exportJson);
+    document.getElementById('resetData').addEventListener('click', resetData);
+    graphSearch.addEventListener('input', renderGraph);
+    window.addEventListener('resize', () => window.requestAnimationFrame(renderGraph));
+
+    renderTabs();
+    renderTable();
+    renderGraph();
   </script>
 </body>
 </html>
