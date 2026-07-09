@@ -1,175 +1,100 @@
 {
   "meta": {
-    "name": "Information Process Management",
-    "subtitle": "BIM Lifecycle Intelligence Graph",
-    "description": "Editable JSON source for use cases, products, inputs/outputs, processes, actors and graph relations.",
-    "version": "0.1.0"
+    "name": {"en": "Information Process Management", "de": "Informationsprozess-Management"},
+    "subtitle": {"en": "BIM Lifecycle Intelligence Graph", "de": "BIM-Lebenszyklus-Intelligenzgraph"},
+    "description": {"en": "GitHub JSON source for BIM data, lifecycle processes, tools, actors and relations.", "de": "GitHub-JSON-Quelle für BIM-Daten, Lebenszyklusprozesse, Werkzeuge, Akteure und Beziehungen."},
+    "version": "0.2.0",
+    "updated": "2026-07-09"
   },
   "tables": {
     "usecases": {
-      "label": "Use cases",
-      "description": "Practical BIM / digital building use cases that become graph subjects.",
+      "label": {"en": "Use cases", "de": "Anwendungsfälle"},
+      "description": {"en": "Practical BIM and lifecycle use cases that become graph subjects.", "de": "Praktische BIM- und Lebenszyklus-Anwendungsfälle, die im Graph als zentrale Knoten erscheinen."},
       "columns": ["id", "name", "description", "process", "product", "input", "output", "priority"],
+      "columnLabels": {"id": {"en": "ID", "de": "ID"}, "name": {"en": "Name", "de": "Name"}, "description": {"en": "Description", "de": "Beschreibung"}, "process": {"en": "Process", "de": "Prozess"}, "product": {"en": "Product", "de": "Produkt"}, "input": {"en": "Input", "de": "Input"}, "output": {"en": "Output", "de": "Output"}, "priority": {"en": "Priority", "de": "Priorität"}},
       "rows": [
-        {
-          "id": "UC-001",
-          "name": "BIM model quality check",
-          "description": "Validate IFC models against project rules before handover.",
-          "process": "Model checking",
-          "product": "Solibri",
-          "input": "IFC model",
-          "output": "Issue report",
-          "priority": "High"
-        },
-        {
-          "id": "UC-002",
-          "name": "BIM2FM asset handover",
-          "description": "Prepare asset data for operation and CAFM import.",
-          "process": "Data handover",
-          "product": "dRofus",
-          "input": "Room and asset data",
-          "output": "FM data package",
-          "priority": "High"
-        },
-        {
-          "id": "UC-003",
-          "name": "Digital twin portfolio view",
-          "description": "Connect building data, systems and operational indicators.",
-          "process": "Portfolio analytics",
-          "product": "Power BI",
-          "input": "Asset registry",
-          "output": "Portfolio dashboard",
-          "priority": "Medium"
-        }
+        {"id": "UC-001", "name": {"en": "BIM model quality check", "de": "BIM-Modellprüfung"}, "description": {"en": "Validate IFC models against project rules before coordination and handover.", "de": "IFC-Modelle vor Koordination und Übergabe gegen Projektregeln prüfen."}, "process": {"en": "Model checking", "de": "Modellprüfung"}, "product": "Solibri", "input": {"en": "IFC model", "de": "IFC-Modell"}, "output": {"en": "Issue report", "de": "Pendenzenbericht"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-002", "name": {"en": "BIM2FM asset handover", "de": "BIM2FM-Anlagenübergabe"}, "description": {"en": "Prepare asset and room data for operation, CAFM import and long-term maintenance.", "de": "Anlagen- und Raumdaten für Betrieb, CAFM-Import und langfristigen Unterhalt vorbereiten."}, "process": {"en": "Data handover", "de": "Datenübergabe"}, "product": "dRofus", "input": {"en": "Room and asset data", "de": "Raum- und Anlagedaten"}, "output": {"en": "FM data package", "de": "FM-Datenpaket"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-003", "name": {"en": "Digital twin portfolio view", "de": "Digital-Twin-Portfoliosicht"}, "description": {"en": "Connect building data, systems and indicators into a portfolio-level view.", "de": "Gebäudedaten, Systeme und Kennzahlen zu einer Portfoliosicht verbinden."}, "process": {"en": "Portfolio analytics", "de": "Portfolio-Analyse"}, "product": "Power BI", "input": {"en": "Asset registry", "de": "Anlagenregister"}, "output": {"en": "Portfolio dashboard", "de": "Portfolio-Dashboard"}, "priority": {"en": "Medium", "de": "Mittel"}},
+        {"id": "UC-004", "name": {"en": "AIA / EIR requirement tracking", "de": "AIA-/EIR-Anforderungsverfolgung"}, "description": {"en": "Track information requirements from tender to delivery and test whether evidence exists.", "de": "Informationsanforderungen von Ausschreibung bis Lieferung verfolgen und Nachweise prüfen."}, "process": {"en": "Requirement management", "de": "Anforderungsmanagement"}, "product": "BIMQ", "input": {"en": "AIA / EIR requirements", "de": "AIA-/EIR-Anforderungen"}, "output": {"en": "Compliance matrix", "de": "Nachweismatrix"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-005", "name": {"en": "IFC property set governance", "de": "IFC-Property-Set-Governance"}, "description": {"en": "Define, check and document property sets for reusable BIM data standards.", "de": "Property Sets für wiederverwendbare BIM-Datenstandards definieren, prüfen und dokumentieren."}, "process": {"en": "Data standardization", "de": "Datenstandardisierung"}, "product": "buildingSMART Data Dictionary", "input": {"en": "Property requirements", "de": "Property-Anforderungen"}, "output": {"en": "Data dictionary", "de": "Datenkatalog"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-006", "name": {"en": "BCF issue coordination", "de": "BCF-Pendenzenkoordination"}, "description": {"en": "Coordinate model issues across disciplines with traceable status and responsibility.", "de": "Modellpendenzen fachübergreifend mit Status und Verantwortlichkeit koordinieren."}, "process": {"en": "Issue management", "de": "Pendenzenmanagement"}, "product": "BIMcollab", "input": {"en": "BCF issues", "de": "BCF-Pendenzen"}, "output": {"en": "Coordination decision log", "de": "Koordinationsentscheid-Protokoll"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-007", "name": {"en": "Energy and sustainability data handover", "de": "Energie- und Nachhaltigkeitsdatenübergabe"}, "description": {"en": "Collect energy, CO₂ and material data for operation and reporting.", "de": "Energie-, CO₂- und Materialdaten für Betrieb und Reporting sammeln."}, "process": {"en": "Sustainability reporting", "de": "Nachhaltigkeitsreporting"}, "product": "One Click LCA", "input": {"en": "Material quantities", "de": "Materialmengen"}, "output": {"en": "CO₂ report", "de": "CO₂-Bericht"}, "priority": {"en": "Medium", "de": "Mittel"}},
+        {"id": "UC-008", "name": {"en": "CAFM readiness check", "de": "CAFM-Readiness-Check"}, "description": {"en": "Check whether asset data is complete enough for CAFM migration and operation.", "de": "Prüfen, ob Anlagendaten vollständig genug für CAFM-Migration und Betrieb sind."}, "process": {"en": "Operational readiness", "de": "Betriebsbereitschaft"}, "product": "Planon", "input": {"en": "Asset attribute set", "de": "Anlagenattribut-Set"}, "output": {"en": "CAFM import file", "de": "CAFM-Importdatei"}, "priority": {"en": "High", "de": "Hoch"}},
+        {"id": "UC-009", "name": {"en": "Space and usage analytics", "de": "Flächen- und Nutzungsanalyse"}, "description": {"en": "Compare room data, occupancy and usage to support portfolio decisions.", "de": "Raumdaten, Belegung und Nutzung für Portfolioentscheide vergleichen."}, "process": {"en": "Space management", "de": "Flächenmanagement"}, "product": "Archibus", "input": {"en": "Room book", "de": "Raumbuch"}, "output": {"en": "Usage heatmap", "de": "Nutzungs-Heatmap"}, "priority": {"en": "Medium", "de": "Mittel"}},
+        {"id": "UC-010", "name": {"en": "Lifecycle change impact analysis", "de": "Lebenszyklus-Änderungsanalyse"}, "description": {"en": "Understand which data, processes, systems and actors are affected by a change.", "de": "Verstehen, welche Daten, Prozesse, Systeme und Akteure von einer Änderung betroffen sind."}, "process": {"en": "Change impact analysis", "de": "Änderungsfolgenanalyse"}, "product": "Neo4j", "input": {"en": "Relation graph", "de": "Beziehungsgraph"}, "output": {"en": "Impact report", "de": "Auswirkungsbericht"}, "priority": {"en": "High", "de": "Hoch"}}
       ]
     },
     "products": {
-      "label": "Products",
-      "description": "Tools, platforms and systems that support the source use cases.",
+      "label": {"en": "Products", "de": "Produkte"},
+      "description": {"en": "Tools, platforms and systems that support BIM data and lifecycle use cases.", "de": "Werkzeuge, Plattformen und Systeme für BIM-Daten und Lebenszyklus-Anwendungsfälle."},
       "columns": ["id", "name", "type", "vendor", "role", "integration"],
+      "columnLabels": {"id": {"en": "ID", "de": "ID"}, "name": {"en": "Name", "de": "Name"}, "type": {"en": "Type", "de": "Typ"}, "vendor": {"en": "Vendor", "de": "Anbieter"}, "role": {"en": "Role", "de": "Rolle"}, "integration": {"en": "Integration", "de": "Integration"}},
       "rows": [
-        {
-          "id": "PR-001",
-          "name": "Solibri",
-          "type": "Model checker",
-          "vendor": "Nemetschek",
-          "role": "Rule-based model validation",
-          "integration": "BCF / IFC"
-        },
-        {
-          "id": "PR-002",
-          "name": "dRofus",
-          "type": "Data management",
-          "vendor": "dRofus",
-          "role": "Room and asset information",
-          "integration": "API / Excel / IFC"
-        },
-        {
-          "id": "PR-003",
-          "name": "Power BI",
-          "type": "Analytics",
-          "vendor": "Microsoft",
-          "role": "Portfolio reporting",
-          "integration": "CSV / SQL / API"
-        }
+        {"id": "PR-001", "name": "Solibri", "type": {"en": "Model checker", "de": "Modellprüfer"}, "vendor": "Nemetschek", "role": {"en": "Rule-based BIM model validation and issue reporting.", "de": "Regelbasierte BIM-Modellprüfung und Pendenzenreporting."}, "integration": "IFC / BCF"},
+        {"id": "PR-002", "name": "dRofus", "type": {"en": "Data management", "de": "Datenmanagement"}, "vendor": "dRofus", "role": {"en": "Room, equipment and requirement database for BIM projects.", "de": "Raum-, Ausstattungs- und Anforderungsdatenbank für BIM-Projekte."}, "integration": "API / Excel / IFC"},
+        {"id": "PR-003", "name": "Power BI", "type": {"en": "Analytics", "de": "Analyse"}, "vendor": "Microsoft", "role": {"en": "Dashboards for portfolio, data quality and lifecycle KPIs.", "de": "Dashboards für Portfolio, Datenqualität und Lebenszyklus-KPIs."}, "integration": "CSV / SQL / API"},
+        {"id": "PR-004", "name": "BIMQ", "type": {"en": "Requirement management", "de": "Anforderungsmanagement"}, "vendor": "BIMQ", "role": {"en": "Define information requirements, model uses and checking rules.", "de": "Informationsanforderungen, Anwendungsfälle und Prüfregeln definieren."}, "integration": "Excel / IFC / IDS"},
+        {"id": "PR-005", "name": "BIMcollab", "type": {"en": "Issue management", "de": "Pendenzenmanagement"}, "vendor": "BIMcollab", "role": {"en": "Track BCF issues and interdisciplinary coordination decisions.", "de": "BCF-Pendenzen und fachübergreifende Koordinationsentscheide verfolgen."}, "integration": "BCF / Revit / Archicad / Solibri"},
+        {"id": "PR-006", "name": "Autodesk Construction Cloud", "type": {"en": "Common data environment", "de": "Common Data Environment"}, "vendor": "Autodesk", "role": {"en": "Document, model and approval workflows in design and construction.", "de": "Dokumenten-, Modell- und Freigabeprozesse in Planung und Bau."}, "integration": "Revit / IFC / API"},
+        {"id": "PR-007", "name": "buildingSMART Data Dictionary", "type": {"en": "Data dictionary", "de": "Datenwörterbuch"}, "vendor": "buildingSMART", "role": {"en": "Standardized terminology and property definitions.", "de": "Standardisierte Begriffe und Property-Definitionen."}, "integration": "bSDD API / IDS"},
+        {"id": "PR-008", "name": "One Click LCA", "type": {"en": "Sustainability analysis", "de": "Nachhaltigkeitsanalyse"}, "vendor": "One Click LCA", "role": {"en": "Life-cycle assessment and carbon reporting from quantities.", "de": "Lebenszyklusanalyse und CO₂-Reporting aus Mengen."}, "integration": "IFC / Excel / API"},
+        {"id": "PR-009", "name": "Planon", "type": {"en": "CAFM / IWMS", "de": "CAFM / IWMS"}, "vendor": "Planon", "role": {"en": "Operational facility and asset management system.", "de": "Betriebliches Facility- und Asset-Management-System."}, "integration": "API / Excel / SQL"},
+        {"id": "PR-010", "name": "Neo4j", "type": {"en": "Graph database", "de": "Graphdatenbank"}, "vendor": "Neo4j", "role": {"en": "Store and query relations between data, systems, actors and lifecycle processes.", "de": "Beziehungen zwischen Daten, Systemen, Akteuren und Lebenszyklusprozessen speichern und abfragen."}, "integration": "Cypher / API / CSV"}
       ]
     },
     "inputsOutputs": {
-      "label": "Inputs / Outputs",
-      "description": "Information objects used as graph resources and table references.",
+      "label": {"en": "Inputs / Outputs", "de": "Inputs / Outputs"},
+      "description": {"en": "Information objects used as inputs, outputs and evidence in the graph.", "de": "Informationsobjekte als Inputs, Outputs und Nachweise im Graph."},
       "columns": ["id", "name", "kind", "format", "owner", "qualityRule"],
+      "columnLabels": {"id": {"en": "ID", "de": "ID"}, "name": {"en": "Name", "de": "Name"}, "kind": {"en": "Kind", "de": "Art"}, "format": {"en": "Format", "de": "Format"}, "owner": {"en": "Owner", "de": "Owner"}, "qualityRule": {"en": "Quality rule", "de": "Qualitätsregel"}},
       "rows": [
-        {
-          "id": "IO-001",
-          "name": "IFC model",
-          "kind": "Input",
-          "format": "IFC4 / IFC2x3",
-          "owner": "Planner",
-          "qualityRule": "Must pass model rules"
-        },
-        {
-          "id": "IO-002",
-          "name": "Issue report",
-          "kind": "Output",
-          "format": "BCF / XLSX / PDF",
-          "owner": "BIM coordination",
-          "qualityRule": "Traceable by element and rule"
-        },
-        {
-          "id": "IO-003",
-          "name": "FM data package",
-          "kind": "Output",
-          "format": "XLSX / CAFM import",
-          "owner": "Operator",
-          "qualityRule": "Complete asset attributes"
-        },
-        {
-          "id": "IO-004",
-          "name": "Asset registry",
-          "kind": "Input",
-          "format": "SQL / XLSX",
-          "owner": "Portfolio management",
-          "qualityRule": "Unique IDs and lifecycle status"
-        }
+        {"id": "IO-001", "name": {"en": "IFC model", "de": "IFC-Modell"}, "kind": {"en": "Input", "de": "Input"}, "format": "IFC4 / IFC2x3", "owner": {"en": "Planner", "de": "Planer"}, "qualityRule": {"en": "Must pass agreed model checking rules.", "de": "Muss vereinbarte Modellprüfregeln erfüllen."}},
+        {"id": "IO-002", "name": {"en": "Issue report", "de": "Pendenzenbericht"}, "kind": {"en": "Output", "de": "Output"}, "format": "BCF / XLSX / PDF", "owner": {"en": "BIM coordination", "de": "BIM-Koordination"}, "qualityRule": {"en": "Every issue needs element reference, rule and responsibility.", "de": "Jede Pendenz braucht Elementbezug, Regel und Verantwortlichkeit."}},
+        {"id": "IO-003", "name": {"en": "FM data package", "de": "FM-Datenpaket"}, "kind": {"en": "Output", "de": "Output"}, "format": "XLSX / CAFM import", "owner": {"en": "Operator", "de": "Betreiber"}, "qualityRule": {"en": "Required asset attributes must be complete.", "de": "Pflichtattribute der Anlagen müssen vollständig sein."}},
+        {"id": "IO-004", "name": {"en": "Asset registry", "de": "Anlagenregister"}, "kind": {"en": "Input", "de": "Input"}, "format": "SQL / XLSX", "owner": {"en": "Asset management", "de": "Asset Management"}, "qualityRule": {"en": "Unique IDs and lifecycle status are mandatory.", "de": "Eindeutige IDs und Lebenszyklusstatus sind Pflicht."}},
+        {"id": "IO-005", "name": {"en": "AIA / EIR requirements", "de": "AIA-/EIR-Anforderungen"}, "kind": {"en": "Input", "de": "Input"}, "format": "PDF / DOCX / XLSX", "owner": {"en": "Client", "de": "Bauherrschaft"}, "qualityRule": {"en": "Each requirement needs scope, phase and verification method.", "de": "Jede Anforderung braucht Scope, Phase und Nachweismethode."}},
+        {"id": "IO-006", "name": {"en": "Compliance matrix", "de": "Nachweismatrix"}, "kind": {"en": "Output", "de": "Output"}, "format": "XLSX / JSON", "owner": {"en": "Information manager", "de": "Informationsmanager"}, "qualityRule": {"en": "Every row maps one requirement to one evidence item.", "de": "Jede Zeile verknüpft eine Anforderung mit einem Nachweis."}},
+        {"id": "IO-007", "name": {"en": "Property requirements", "de": "Property-Anforderungen"}, "kind": {"en": "Input", "de": "Input"}, "format": "IDS / XLSX", "owner": {"en": "Data governance", "de": "Data Governance"}, "qualityRule": {"en": "Properties must have name, unit, data type and source.", "de": "Properties brauchen Name, Einheit, Datentyp und Quelle."}},
+        {"id": "IO-008", "name": {"en": "Data dictionary", "de": "Datenkatalog"}, "kind": {"en": "Output", "de": "Output"}, "format": "JSON / bSDD / IDS", "owner": {"en": "Data governance", "de": "Data Governance"}, "qualityRule": {"en": "Definitions should be reusable and versioned.", "de": "Definitionen sollen wiederverwendbar und versioniert sein."}},
+        {"id": "IO-009", "name": {"en": "Room book", "de": "Raumbuch"}, "kind": {"en": "Input", "de": "Input"}, "format": "XLSX / dRofus / SQL", "owner": {"en": "User representative", "de": "Nutzervertretung"}, "qualityRule": {"en": "Rooms require ID, area, function and organization.", "de": "Räume brauchen ID, Fläche, Funktion und Organisation."}},
+        {"id": "IO-010", "name": {"en": "Impact report", "de": "Auswirkungsbericht"}, "kind": {"en": "Output", "de": "Output"}, "format": "HTML / PDF / JSON", "owner": {"en": "Change board", "de": "Change Board"}, "qualityRule": {"en": "Affected processes, systems and data owners must be listed.", "de": "Betroffene Prozesse, Systeme und Datenowner müssen aufgeführt sein."}}
       ]
     },
     "processes": {
-      "label": "Processes",
-      "description": "Business and project processes connected to use cases, products and data objects.",
+      "label": {"en": "Processes", "de": "Prozesse"},
+      "description": {"en": "Lifecycle and information processes connected to use cases, products and data objects.", "de": "Lebenszyklus- und Informationsprozesse, verknüpft mit Anwendungsfällen, Produkten und Datenobjekten."},
       "columns": ["id", "name", "phase", "owner", "kpi", "evidence"],
+      "columnLabels": {"id": {"en": "ID", "de": "ID"}, "name": {"en": "Name", "de": "Name"}, "phase": {"en": "Phase", "de": "Phase"}, "owner": {"en": "Owner", "de": "Owner"}, "kpi": {"en": "KPI", "de": "KPI"}, "evidence": {"en": "Evidence", "de": "Nachweis"}},
       "rows": [
-        {
-          "id": "PC-001",
-          "name": "Model checking",
-          "phase": "Design / construction",
-          "owner": "BIM coordination",
-          "kpi": "Open issues by severity",
-          "evidence": "BCF report"
-        },
-        {
-          "id": "PC-002",
-          "name": "Data handover",
-          "phase": "Handover",
-          "owner": "BIM2FM lead",
-          "kpi": "Attribute completeness",
-          "evidence": "Handover checklist"
-        },
-        {
-          "id": "PC-003",
-          "name": "Portfolio analytics",
-          "phase": "Operation",
-          "owner": "Asset management",
-          "kpi": "Data coverage by building",
-          "evidence": "Dashboard export"
-        }
+        {"id": "PC-001", "name": {"en": "Model checking", "de": "Modellprüfung"}, "phase": {"en": "Design / construction", "de": "Planung / Bau"}, "owner": {"en": "BIM coordination", "de": "BIM-Koordination"}, "kpi": {"en": "Open issues by severity", "de": "Offene Pendenzen nach Schweregrad"}, "evidence": {"en": "BCF report", "de": "BCF-Bericht"}},
+        {"id": "PC-002", "name": {"en": "Data handover", "de": "Datenübergabe"}, "phase": {"en": "Handover", "de": "Übergabe"}, "owner": {"en": "BIM2FM lead", "de": "BIM2FM-Leitung"}, "kpi": {"en": "Attribute completeness", "de": "Attributvollständigkeit"}, "evidence": {"en": "Handover checklist", "de": "Übergabecheckliste"}},
+        {"id": "PC-003", "name": {"en": "Portfolio analytics", "de": "Portfolio-Analyse"}, "phase": {"en": "Operation", "de": "Betrieb"}, "owner": {"en": "Asset management", "de": "Asset Management"}, "kpi": {"en": "Data coverage by building", "de": "Datenabdeckung pro Gebäude"}, "evidence": {"en": "Dashboard export", "de": "Dashboard-Export"}},
+        {"id": "PC-004", "name": {"en": "Requirement management", "de": "Anforderungsmanagement"}, "phase": {"en": "Strategy / tender", "de": "Strategie / Ausschreibung"}, "owner": {"en": "Information manager", "de": "Informationsmanager"}, "kpi": {"en": "Requirements with evidence method", "de": "Anforderungen mit Nachweismethode"}, "evidence": {"en": "AIA / EIR register", "de": "AIA-/EIR-Register"}},
+        {"id": "PC-005", "name": {"en": "Data standardization", "de": "Datenstandardisierung"}, "phase": {"en": "Setup / governance", "de": "Setup / Governance"}, "owner": {"en": "Data governance", "de": "Data Governance"}, "kpi": {"en": "Reusable definitions", "de": "Wiederverwendbare Definitionen"}, "evidence": {"en": "Data dictionary", "de": "Datenkatalog"}},
+        {"id": "PC-006", "name": {"en": "Issue management", "de": "Pendenzenmanagement"}, "phase": {"en": "Coordination", "de": "Koordination"}, "owner": {"en": "BIM coordination", "de": "BIM-Koordination"}, "kpi": {"en": "Closure rate", "de": "Abschlussrate"}, "evidence": {"en": "Coordination log", "de": "Koordinationsprotokoll"}},
+        {"id": "PC-007", "name": {"en": "Sustainability reporting", "de": "Nachhaltigkeitsreporting"}, "phase": {"en": "Design / operation", "de": "Planung / Betrieb"}, "owner": {"en": "Sustainability lead", "de": "Nachhaltigkeitsleitung"}, "kpi": {"en": "CO₂ per m²", "de": "CO₂ pro m²"}, "evidence": {"en": "CO₂ report", "de": "CO₂-Bericht"}},
+        {"id": "PC-008", "name": {"en": "Operational readiness", "de": "Betriebsbereitschaft"}, "phase": {"en": "Commissioning", "de": "Inbetriebnahme"}, "owner": {"en": "Operator", "de": "Betreiber"}, "kpi": {"en": "CAFM-ready assets", "de": "CAFM-fähige Anlagen"}, "evidence": {"en": "Readiness checklist", "de": "Readiness-Checkliste"}},
+        {"id": "PC-009", "name": {"en": "Space management", "de": "Flächenmanagement"}, "phase": {"en": "Operation / portfolio", "de": "Betrieb / Portfolio"}, "owner": {"en": "Real estate management", "de": "Immobilienmanagement"}, "kpi": {"en": "Utilization rate", "de": "Auslastungsgrad"}, "evidence": {"en": "Usage dashboard", "de": "Nutzungsdashboard"}},
+        {"id": "PC-010", "name": {"en": "Change impact analysis", "de": "Änderungsfolgenanalyse"}, "phase": {"en": "Lifecycle management", "de": "Lebenszyklusmanagement"}, "owner": {"en": "Change board", "de": "Change Board"}, "kpi": {"en": "Affected relations per change", "de": "Betroffene Beziehungen pro Änderung"}, "evidence": {"en": "Impact report", "de": "Auswirkungsbericht"}}
       ]
     },
     "actors": {
-      "label": "Actors",
-      "description": "Stakeholders, responsible roles and data owners.",
+      "label": {"en": "Actors", "de": "Akteure"},
+      "description": {"en": "Stakeholders, responsible roles and data owners in the lifecycle graph.", "de": "Stakeholder, verantwortliche Rollen und Datenowner im Lebenszyklusgraph."},
       "columns": ["id", "name", "role", "organization", "responsibility"],
+      "columnLabels": {"id": {"en": "ID", "de": "ID"}, "name": {"en": "Name", "de": "Name"}, "role": {"en": "Role", "de": "Rolle"}, "organization": {"en": "Organization", "de": "Organisation"}, "responsibility": {"en": "Responsibility", "de": "Verantwortung"}},
       "rows": [
-        {
-          "id": "AC-001",
-          "name": "BIM coordination",
-          "role": "Quality owner",
-          "organization": "Project",
-          "responsibility": "Rules, BCF, coordination"
-        },
-        {
-          "id": "AC-002",
-          "name": "Operator",
-          "role": "Data receiver",
-          "organization": "Facility management",
-          "responsibility": "Operate CAFM-ready data"
-        },
-        {
-          "id": "AC-003",
-          "name": "Asset management",
-          "role": "Portfolio owner",
-          "organization": "Client",
-          "responsibility": "Evaluate portfolio KPIs"
-        }
+        {"id": "AC-001", "name": {"en": "BIM coordination", "de": "BIM-Koordination"}, "role": {"en": "Quality owner", "de": "Qualitätsverantwortung"}, "organization": {"en": "Project", "de": "Projekt"}, "responsibility": {"en": "Rules, BCF, coordination and model quality.", "de": "Regeln, BCF, Koordination und Modellqualität."}},
+        {"id": "AC-002", "name": {"en": "Operator", "de": "Betreiber"}, "role": {"en": "Data receiver", "de": "Datenempfänger"}, "organization": {"en": "Facility management", "de": "Facility Management"}, "responsibility": {"en": "Operate CAFM-ready asset and room data.", "de": "CAFM-fähige Anlagen- und Raumdaten betreiben."}},
+        {"id": "AC-003", "name": {"en": "Asset management", "de": "Asset Management"}, "role": {"en": "Portfolio owner", "de": "Portfolioverantwortung"}, "organization": {"en": "Client", "de": "Bauherrschaft"}, "responsibility": {"en": "Evaluate portfolio KPIs and lifecycle decisions.", "de": "Portfolio-KPIs und Lebenszyklusentscheide auswerten."}},
+        {"id": "AC-004", "name": {"en": "Information manager", "de": "Informationsmanager"}, "role": {"en": "Requirement owner", "de": "Anforderungsverantwortung"}, "organization": {"en": "Client / project", "de": "Bauherrschaft / Projekt"}, "responsibility": {"en": "Translate business goals into information requirements.", "de": "Geschäftsziele in Informationsanforderungen übersetzen."}},
+        {"id": "AC-005", "name": {"en": "Planner", "de": "Planer"}, "role": {"en": "Model author", "de": "Modellautor"}, "organization": {"en": "Design team", "de": "Planungsteam"}, "responsibility": {"en": "Create and maintain discipline models and data.", "de": "Fachmodelle und Daten erstellen und pflegen."}},
+        {"id": "AC-006", "name": {"en": "Data governance", "de": "Data Governance"}, "role": {"en": "Standard owner", "de": "Standardverantwortung"}, "organization": {"en": "Organization", "de": "Organisation"}, "responsibility": {"en": "Define data standards, naming and lifecycle rules.", "de": "Datenstandards, Benennung und Lebenszyklusregeln definieren."}},
+        {"id": "AC-007", "name": {"en": "Sustainability lead", "de": "Nachhaltigkeitsleitung"}, "role": {"en": "ESG data owner", "de": "ESG-Datenowner"}, "organization": {"en": "Sustainability", "de": "Nachhaltigkeit"}, "responsibility": {"en": "Manage carbon, energy and material evidence.", "de": "CO₂-, Energie- und Materialnachweise führen."}},
+        {"id": "AC-008", "name": {"en": "Change board", "de": "Change Board"}, "role": {"en": "Decision body", "de": "Entscheidungsgremium"}, "organization": {"en": "Client / operations", "de": "Bauherrschaft / Betrieb"}, "responsibility": {"en": "Decide on changes based on impact and risk.", "de": "Änderungen anhand Auswirkung und Risiko entscheiden."}},
+        {"id": "AC-009", "name": {"en": "User representative", "de": "Nutzervertretung"}, "role": {"en": "Demand owner", "de": "Bedarfsverantwortung"}, "organization": {"en": "Users", "de": "Nutzer"}, "responsibility": {"en": "Define room, usage and operational needs.", "de": "Raum-, Nutzungs- und Betriebsbedürfnisse definieren."}},
+        {"id": "AC-010", "name": {"en": "IT integration", "de": "IT-Integration"}, "role": {"en": "System connector", "de": "Systemintegration"}, "organization": {"en": "IT", "de": "IT"}, "responsibility": {"en": "Connect APIs, identity, data pipelines and security requirements.", "de": "APIs, Identität, Datenpipelines und Sicherheitsanforderungen verbinden."}}
       ]
     }
   }
