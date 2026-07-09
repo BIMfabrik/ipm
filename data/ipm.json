@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "name": "Information Process Management",
+    "subtitle": "BIM Lifecycle Intelligence Graph",
+    "description": "Editable JSON source for use cases, products, inputs/outputs, processes, actors and graph relations.",
+    "version": "0.1.0"
+  },
+  "tables": {
+    "usecases": {
+      "label": "Use cases",
+      "description": "Practical BIM / digital building use cases that become graph subjects.",
+      "columns": ["id", "name", "description", "process", "product", "input", "output", "priority"],
+      "rows": [
+        {
+          "id": "UC-001",
+          "name": "BIM model quality check",
+          "description": "Validate IFC models against project rules before handover.",
+          "process": "Model checking",
+          "product": "Solibri",
+          "input": "IFC model",
+          "output": "Issue report",
+          "priority": "High"
+        },
+        {
+          "id": "UC-002",
+          "name": "BIM2FM asset handover",
+          "description": "Prepare asset data for operation and CAFM import.",
+          "process": "Data handover",
+          "product": "dRofus",
+          "input": "Room and asset data",
+          "output": "FM data package",
+          "priority": "High"
+        },
+        {
+          "id": "UC-003",
+          "name": "Digital twin portfolio view",
+          "description": "Connect building data, systems and operational indicators.",
+          "process": "Portfolio analytics",
+          "product": "Power BI",
+          "input": "Asset registry",
+          "output": "Portfolio dashboard",
+          "priority": "Medium"
+        }
+      ]
+    },
+    "products": {
+      "label": "Products",
+      "description": "Tools, platforms and systems that support the source use cases.",
+      "columns": ["id", "name", "type", "vendor", "role", "integration"],
+      "rows": [
+        {
+          "id": "PR-001",
+          "name": "Solibri",
+          "type": "Model checker",
+          "vendor": "Nemetschek",
+          "role": "Rule-based model validation",
+          "integration": "BCF / IFC"
+        },
+        {
+          "id": "PR-002",
+          "name": "dRofus",
+          "type": "Data management",
+          "vendor": "dRofus",
+          "role": "Room and asset information",
+          "integration": "API / Excel / IFC"
+        },
+        {
+          "id": "PR-003",
+          "name": "Power BI",
+          "type": "Analytics",
+          "vendor": "Microsoft",
+          "role": "Portfolio reporting",
+          "integration": "CSV / SQL / API"
+        }
+      ]
+    },
+    "inputsOutputs": {
+      "label": "Inputs / Outputs",
+      "description": "Information objects used as graph resources and table references.",
+      "columns": ["id", "name", "kind", "format", "owner", "qualityRule"],
+      "rows": [
+        {
+          "id": "IO-001",
+          "name": "IFC model",
+          "kind": "Input",
+          "format": "IFC4 / IFC2x3",
+          "owner": "Planner",
+          "qualityRule": "Must pass model rules"
+        },
+        {
+          "id": "IO-002",
+          "name": "Issue report",
+          "kind": "Output",
+          "format": "BCF / XLSX / PDF",
+          "owner": "BIM coordination",
+          "qualityRule": "Traceable by element and rule"
+        },
+        {
+          "id": "IO-003",
+          "name": "FM data package",
+          "kind": "Output",
+          "format": "XLSX / CAFM import",
+          "owner": "Operator",
+          "qualityRule": "Complete asset attributes"
+        },
+        {
+          "id": "IO-004",
+          "name": "Asset registry",
+          "kind": "Input",
+          "format": "SQL / XLSX",
+          "owner": "Portfolio management",
+          "qualityRule": "Unique IDs and lifecycle status"
+        }
+      ]
+    },
+    "processes": {
+      "label": "Processes",
+      "description": "Business and project processes connected to use cases, products and data objects.",
+      "columns": ["id", "name", "phase", "owner", "kpi", "evidence"],
+      "rows": [
+        {
+          "id": "PC-001",
+          "name": "Model checking",
+          "phase": "Design / construction",
+          "owner": "BIM coordination",
+          "kpi": "Open issues by severity",
+          "evidence": "BCF report"
+        },
+        {
+          "id": "PC-002",
+          "name": "Data handover",
+          "phase": "Handover",
+          "owner": "BIM2FM lead",
+          "kpi": "Attribute completeness",
+          "evidence": "Handover checklist"
+        },
+        {
+          "id": "PC-003",
+          "name": "Portfolio analytics",
+          "phase": "Operation",
+          "owner": "Asset management",
+          "kpi": "Data coverage by building",
+          "evidence": "Dashboard export"
+        }
+      ]
+    },
+    "actors": {
+      "label": "Actors",
+      "description": "Stakeholders, responsible roles and data owners.",
+      "columns": ["id", "name", "role", "organization", "responsibility"],
+      "rows": [
+        {
+          "id": "AC-001",
+          "name": "BIM coordination",
+          "role": "Quality owner",
+          "organization": "Project",
+          "responsibility": "Rules, BCF, coordination"
+        },
+        {
+          "id": "AC-002",
+          "name": "Operator",
+          "role": "Data receiver",
+          "organization": "Facility management",
+          "responsibility": "Operate CAFM-ready data"
+        },
+        {
+          "id": "AC-003",
+          "name": "Asset management",
+          "role": "Portfolio owner",
+          "organization": "Client",
+          "responsibility": "Evaluate portfolio KPIs"
+        }
+      ]
+    }
+  }
+}
