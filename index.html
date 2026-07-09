@@ -3,247 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="IPM triplestore visualization and editable source tables." />
-  <title>IPM | Triplestore Prototype</title>
+  <meta name="description" content="Information Process Management graph for BIM data and lifecycle relations." />
+  <title>IPM | BIM Lifecycle Intelligence Graph</title>
   <style>
-    :root {
-      color-scheme: light dark;
-      --bg: #f5f5f7;
-      --panel: rgba(255, 255, 255, 0.84);
-      --panel-strong: #ffffff;
-      --text: #1d1d1f;
-      --muted: #6e6e73;
-      --line: rgba(0, 0, 0, 0.10);
-      --line-strong: rgba(0, 0, 0, 0.18);
-      --accent: #0a84ff;
-      --accent-soft: rgba(10, 132, 255, 0.12);
-      --good: #248a3d;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.10);
-      --radius: 24px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #050505;
-        --panel: rgba(28, 28, 30, 0.84);
-        --panel-strong: #1c1c1e;
-        --text: #f5f5f7;
-        --muted: #a1a1a6;
-        --line: rgba(255, 255, 255, 0.13);
-        --line-strong: rgba(255, 255, 255, 0.24);
-        --accent: #64d2ff;
-        --accent-soft: rgba(100, 210, 255, 0.14);
-        --good: #30d158;
-        --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-      }
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(10, 132, 255, 0.16), transparent 34rem),
-        radial-gradient(circle at bottom right, rgba(48, 209, 88, 0.10), transparent 34rem),
-        var(--bg);
-      overflow: hidden;
-    }
-
-    button, input { font: inherit; }
-
-    button {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--panel-strong);
-      color: var(--text);
-      padding: 9px 14px;
-      cursor: pointer;
-    }
-
-    button:hover, button[aria-selected="true"] {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-    }
-
-    .app {
-      height: 100dvh;
-      display: grid;
-      grid-template-rows: 2fr 1fr;
-      padding: 18px;
-      gap: 14px;
-    }
-
-    .graph-panel, .data-panel {
-      min-height: 0;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      backdrop-filter: blur(24px);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .graph-panel, .data-panel { display: grid; }
-    .graph-panel { grid-template-rows: auto 1fr; }
-    .data-panel { grid-template-rows: auto auto 1fr; }
-
-    .topbar, .tablebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
-    .brand strong { font-size: 1rem; letter-spacing: -0.02em; white-space: nowrap; }
-    .brand span, .meta { color: var(--muted); font-size: 0.88rem; }
-    .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-
-    .search {
-      width: min(280px, 34vw);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--panel-strong);
-      color: var(--text);
-      padding: 9px 13px;
-      outline: none;
-    }
-
-    .search:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-
-    .graph-wrap { position: relative; min-height: 0; overflow: hidden; }
-    #graph { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-    #graph:active { cursor: grabbing; }
-
-    .edge { stroke: var(--line-strong); stroke-width: 1.6; transition: opacity 160ms ease, stroke-width 160ms ease; }
-    .edge.dimmed { opacity: 0.14; }
-    .edge.active { stroke: var(--accent); stroke-width: 3; opacity: 1; }
-
-    .edge-label {
-      fill: var(--muted);
-      font-size: 11px;
-      font-family: var(--mono);
-      paint-order: stroke;
-      stroke: var(--panel-strong);
-      stroke-width: 4px;
-      stroke-linejoin: round;
-      pointer-events: none;
-    }
-
-    .edge-label.dimmed { opacity: 0.14; }
-    .edge-label.active { fill: var(--accent); opacity: 1; }
-
-    .node { cursor: pointer; transition: opacity 160ms ease; }
-    .node.dragging { cursor: grabbing; }
-    .node.dimmed { opacity: 0.22; }
-    .node circle { stroke: var(--panel-strong); stroke-width: 3; transition: stroke-width 160ms ease, filter 160ms ease; }
-    .node.active circle { stroke: var(--accent); stroke-width: 5; filter: drop-shadow(0 12px 22px rgba(10,132,255,.28)); }
-    .node text { fill: var(--text); font-weight: 700; font-size: 12px; paint-order: stroke; stroke: var(--panel-strong); stroke-width: 5px; stroke-linejoin: round; pointer-events: none; }
-    .node .type { fill: var(--muted); font-size: 10px; font-family: var(--mono); font-weight: 500; }
-
-    .legend {
-      position: absolute;
-      left: 16px;
-      bottom: 16px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      pointer-events: none;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 0.8rem;
-      white-space: nowrap;
-    }
-
-    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-
-    .node-card {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: min(340px, calc(100% - 32px));
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 14px;
-      display: none;
-    }
-
-    .node-card.visible { display: block; }
-    .node-card header { display: flex; justify-content: space-between; gap: 10px; align-items: start; margin-bottom: 10px; }
-    .node-card h2 { margin: 0; font-size: 1rem; letter-spacing: -0.02em; }
-    .node-card p { margin: 6px 0 0; color: var(--muted); font-size: 0.86rem; }
-    .node-card dl { margin: 0; display: grid; grid-template-columns: 96px 1fr; gap: 8px; font-size: 0.84rem; }
-    .node-card dt { color: var(--muted); }
-    .node-card dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-    .node-card .close { padding: 4px 8px; line-height: 1; }
-
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px; border-bottom: 1px solid var(--line); }
-    .tab { white-space: nowrap; }
-    .tablebar { padding-block: 10px; }
-    .table-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .table-title strong { font-size: 0.95rem; }
-    .table-title span { color: var(--muted); font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .table-wrap { min-height: 0; overflow: auto; }
-
-    table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 980px; background: transparent; }
-    th, td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; font-size: 0.9rem; }
-    th:last-child, td:last-child { border-right: 0; }
-    th { position: sticky; top: 0; z-index: 1; background: var(--panel-strong); color: var(--muted); font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; user-select: none; }
-    td { background: rgba(255, 255, 255, 0.02); }
-    td[contenteditable="true"] { outline: none; }
-    td[contenteditable="true"]:focus { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
-    .row-actions { width: 84px; text-align: right; white-space: nowrap; }
-    .small-btn { padding: 6px 9px; font-size: 0.78rem; }
-    .status { color: var(--good); font-size: 0.82rem; min-width: 84px; text-align: right; }
-
-    @media (max-width: 900px) {
-      body { overflow: auto; }
-      .app { min-height: 100dvh; height: auto; grid-template-rows: 62dvh minmax(360px, 1fr); padding: 10px; gap: 10px; }
-      .topbar, .tablebar { align-items: flex-start; flex-direction: column; }
-      .toolbar { justify-content: flex-start; width: 100%; }
-      .search { width: 100%; }
-      .brand { flex-direction: column; gap: 2px; }
-      .legend { left: 10px; right: 10px; bottom: 10px; }
-      .node-card { top: auto; bottom: 10px; right: 10px; left: 10px; width: auto; }
-    }
+    :root{color-scheme:light dark;--bg:#f5f5f7;--panel:rgba(255,255,255,.86);--solid:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.11);--edge:rgba(0,0,0,.22);--accent:#0a84ff;--soft:rgba(10,132,255,.12);--good:#248a3d;--shadow:0 24px 80px rgba(0,0,0,.1);--radius:24px;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
+    @media (prefers-color-scheme:dark){:root{--bg:#050505;--panel:rgba(28,28,30,.86);--solid:#1c1c1e;--text:#f5f5f7;--muted:#a1a1a6;--line:rgba(255,255,255,.14);--edge:rgba(255,255,255,.26);--accent:#64d2ff;--soft:rgba(100,210,255,.14);--good:#30d158;--shadow:0 24px 80px rgba(0,0,0,.45)}}
+    *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(10,132,255,.16),transparent 34rem),radial-gradient(circle at bottom right,rgba(48,209,88,.1),transparent 34rem),var(--bg);overflow:hidden}button,input,select{font:inherit}button,select{border:1px solid var(--line);border-radius:999px;background:var(--solid);color:var(--text);padding:9px 14px}button{cursor:pointer}button:hover,button[aria-selected=true],select:focus{border-color:var(--accent);background:var(--soft);outline:0}.app{height:100dvh;display:grid;grid-template-rows:2fr 1fr;padding:18px;gap:14px}.graph-panel,.data-panel{min-height:0;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(24px);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:grid}.graph-panel{grid-template-rows:auto 1fr}.data-panel{grid-template-rows:auto auto 1fr}.topbar,.tablebar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}.brand{display:flex;flex-direction:column;gap:2px;min-width:0}.brand strong{font-size:1.05rem;letter-spacing:-.025em}.brand span,.meta{color:var(--muted);font-size:.88rem}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.search{width:min(250px,28vw);border:1px solid var(--line);border-radius:999px;background:var(--solid);color:var(--text);padding:9px 13px;outline:0}.search:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}.graph-wrap{position:relative;min-height:0;overflow:hidden}#graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none}#graph:active{cursor:grabbing}.cluster-bg{fill:var(--solid);stroke:var(--line);stroke-width:1.2;opacity:.55}.cluster-label{fill:var(--muted);font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;paint-order:stroke;stroke:var(--solid);stroke-width:5px}.edge{stroke:var(--edge);stroke-width:1.6;transition:opacity .16s,stroke-width .16s}.edge.dimmed{opacity:.12}.edge.active{stroke:var(--accent);stroke-width:3;opacity:1}.edge-label{fill:var(--muted);font-size:11px;font-family:var(--mono);paint-order:stroke;stroke:var(--solid);stroke-width:4px;stroke-linejoin:round;pointer-events:none}.edge-label.dimmed{opacity:.12}.edge-label.active{fill:var(--accent);opacity:1}.node{cursor:pointer;transition:opacity .16s}.node.dragging{cursor:grabbing}.node.dimmed{opacity:.22}.node circle{stroke:var(--solid);stroke-width:3;transition:stroke-width .16s,filter .16s}.node.active circle{stroke:var(--accent);stroke-width:5;filter:drop-shadow(0 12px 22px rgba(10,132,255,.28))}.node text{fill:var(--text);font-weight:700;font-size:12px;paint-order:stroke;stroke:var(--solid);stroke-width:5px;stroke-linejoin:round;pointer-events:none}.node .type{fill:var(--muted);font-size:10px;font-family:var(--mono);font-weight:500}.legend{position:absolute;left:16px;bottom:16px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--solid);color:var(--muted);border-radius:999px;padding:7px 10px;font-size:.8rem;white-space:nowrap}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}.node-card{position:absolute;top:16px;right:16px;width:min(360px,calc(100% - 32px));border:1px solid var(--line);background:var(--solid);border-radius:20px;box-shadow:var(--shadow);padding:14px;display:none}.node-card.visible{display:block}.node-card header{display:flex;justify-content:space-between;gap:10px;align-items:start;margin-bottom:10px}.node-card h2{margin:0;font-size:1rem;letter-spacing:-.02em}.node-card p{margin:6px 0 0;color:var(--muted);font-size:.86rem}.node-card dl{margin:0;display:grid;grid-template-columns:96px 1fr;gap:8px;font-size:.84rem}.node-card dt{color:var(--muted)}.node-card dd{margin:0;min-width:0;overflow-wrap:anywhere}.node-card .close{padding:4px 8px;line-height:1}.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;border-bottom:1px solid var(--line)}.tab{white-space:nowrap}.tablebar{padding-block:10px}.table-title{display:flex;flex-direction:column;gap:2px;min-width:0}.table-title strong{font-size:.95rem}.table-title span{color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.table-wrap{min-height:0;overflow:auto}table{width:100%;border-collapse:separate;border-spacing:0;min-width:980px;background:transparent}th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:.9rem}th:last-child,td:last-child{border-right:0}th{position:sticky;top:0;z-index:1;background:var(--solid);color:var(--muted);font-size:.76rem;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;user-select:none}td[contenteditable=true]{outline:0}td[contenteditable=true]:focus{background:var(--soft);box-shadow:inset 0 0 0 2px var(--accent)}.row-actions{width:84px;text-align:right;white-space:nowrap}.small-btn{padding:6px 9px;font-size:.78rem}.status{color:var(--good);font-size:.82rem;min-width:84px;text-align:right}@media(max-width:900px){body{overflow:auto}.app{min-height:100dvh;height:auto;grid-template-rows:62dvh minmax(360px,1fr);padding:10px;gap:10px}.topbar,.tablebar{align-items:flex-start;flex-direction:column}.toolbar{justify-content:flex-start;width:100%}.search{width:100%}.legend{left:10px;right:10px;bottom:10px}.node-card{top:auto;bottom:10px;right:10px;left:10px;width:auto}}
   </style>
 </head>
 <body>
   <main class="app">
-    <section class="graph-panel" aria-label="Triplestore visualization">
+    <section class="graph-panel" aria-label="BIM lifecycle relations graph">
       <header class="topbar">
         <div class="brand">
-          <strong>IPM Triplestore</strong>
-          <span>Interactive RDF source graph from editable tables</span>
+          <strong>Information Process Management</strong>
+          <span>BIM Lifecycle Intelligence Graph — see the hidden links between use cases, data, tools and operations.</span>
         </div>
         <div class="toolbar">
           <input id="graphSearch" class="search" type="search" placeholder="Filter graph nodes..." />
+          <select id="layoutMode" aria-label="Graph layout mode">
+            <option value="topic">Story clusters</option>
+            <option value="type">Data lanes</option>
+            <option value="radial">Impact radar</option>
+            <option value="manual">Manual</option>
+          </select>
+          <button id="arrangeGraph" type="button">No overlap</button>
           <button id="fitGraph" type="button">Fit graph</button>
           <button id="resetData" type="button">Reset demo data</button>
           <span id="graphMeta" class="meta"></span>
         </div>
       </header>
       <div class="graph-wrap">
-        <svg id="graph" role="img" aria-label="Interactive RDF graph visualization"></svg>
+        <svg id="graph" role="img" aria-label="Interactive BIM lifecycle relations graph"></svg>
         <aside id="nodeCard" class="node-card" aria-live="polite"></aside>
         <div class="legend" aria-hidden="true">
           <span class="chip"><span class="dot" style="background:#0a84ff"></span>Use cases</span>
@@ -257,407 +48,76 @@
     <section class="data-panel" aria-label="Source tables">
       <nav id="tabs" class="tabs" aria-label="Source table tabs"></nav>
       <div class="tablebar">
-        <div class="table-title">
-          <strong id="activeTitle"></strong>
-          <span id="activeDescription"></span>
-        </div>
-        <div class="toolbar">
-          <button id="addRow" type="button">Add row</button>
-          <button id="exportJson" type="button">Export JSON</button>
-          <span id="saveStatus" class="status">Saved</span>
-        </div>
+        <div class="table-title"><strong id="activeTitle"></strong><span id="activeDescription"></span></div>
+        <div class="toolbar"><button id="addRow" type="button">Add row</button><button id="exportJson" type="button">Export JSON</button><span id="saveStatus" class="status">Saved</span></div>
       </div>
       <div id="tableWrap" class="table-wrap"></div>
     </section>
   </main>
 
   <script>
-    const STORAGE_KEY = 'ipm-source-tables-v1';
-    const POSITION_KEY = 'ipm-graph-positions-v1';
-
-    const colors = {
-      usecase: '#0a84ff', product: '#30d158', input: '#ff9f0a', output: '#ff9f0a',
-      process: '#bf5af2', actor: '#ff453a', evidence: '#8e8e93'
+    const STORAGE_KEY='ipm-source-tables-v1',POSITION_KEY='ipm-graph-positions-v1',LAYOUT_KEY='ipm-graph-layout-v1';
+    const colors={usecase:'#0a84ff',product:'#30d158',input:'#ff9f0a',output:'#ff9f0a',process:'#bf5af2',actor:'#ff453a',evidence:'#8e8e93'};
+    const defaultTables={
+      usecases:{label:'Use cases',description:'First source table: practical BIM / digital building use cases to become graph subjects.',columns:['id','name','description','process','product','input','output','priority'],rows:[
+        {id:'UC-001',name:'BIM model quality check',description:'Validate IFC models against project rules before handover.',process:'Model checking',product:'Solibri',input:'IFC model',output:'Issue report',priority:'High'},
+        {id:'UC-002',name:'BIM2FM asset handover',description:'Prepare asset data for operation and CAFM import.',process:'Data handover',product:'dRofus',input:'Room and asset data',output:'FM data package',priority:'High'},
+        {id:'UC-003',name:'Digital twin portfolio view',description:'Connect building data, systems and operational indicators.',process:'Portfolio analytics',product:'Power BI',input:'Asset registry',output:'Portfolio dashboard',priority:'Medium'}]},
+      products:{label:'Products',description:'Tools, platforms and systems that support the source use cases.',columns:['id','name','type','vendor','role','integration'],rows:[
+        {id:'PR-001',name:'Solibri',type:'Model checker',vendor:'Nemetschek',role:'Rule-based model validation',integration:'BCF / IFC'},
+        {id:'PR-002',name:'dRofus',type:'Data management',vendor:'dRofus',role:'Room and asset information',integration:'API / Excel / IFC'},
+        {id:'PR-003',name:'Power BI',type:'Analytics',vendor:'Microsoft',role:'Portfolio reporting',integration:'CSV / SQL / API'}]},
+      inputsOutputs:{label:'Inputs / Outputs',description:'Information objects used as graph resources and table references.',columns:['id','name','kind','format','owner','qualityRule'],rows:[
+        {id:'IO-001',name:'IFC model',kind:'Input',format:'IFC4 / IFC2x3',owner:'Planner',qualityRule:'Must pass model rules'},
+        {id:'IO-002',name:'Issue report',kind:'Output',format:'BCF / XLSX / PDF',owner:'BIM coordination',qualityRule:'Traceable by element and rule'},
+        {id:'IO-003',name:'FM data package',kind:'Output',format:'XLSX / CAFM import',owner:'Operator',qualityRule:'Complete asset attributes'},
+        {id:'IO-004',name:'Asset registry',kind:'Input',format:'SQL / XLSX',owner:'Portfolio management',qualityRule:'Unique IDs and lifecycle status'}]},
+      processes:{label:'Processes',description:'Business and project processes connected to use cases, products and data objects.',columns:['id','name','phase','owner','kpi','evidence'],rows:[
+        {id:'PC-001',name:'Model checking',phase:'Design / construction',owner:'BIM coordination',kpi:'Open issues by severity',evidence:'BCF report'},
+        {id:'PC-002',name:'Data handover',phase:'Handover',owner:'BIM2FM lead',kpi:'Attribute completeness',evidence:'Handover checklist'},
+        {id:'PC-003',name:'Portfolio analytics',phase:'Operation',owner:'Asset management',kpi:'Data coverage by building',evidence:'Dashboard export'}]},
+      actors:{label:'Actors',description:'Stakeholders, responsible roles and data owners.',columns:['id','name','role','organization','responsibility'],rows:[
+        {id:'AC-001',name:'BIM coordination',role:'Quality owner',organization:'Project',responsibility:'Rules, BCF, coordination'},
+        {id:'AC-002',name:'Operator',role:'Data receiver',organization:'Facility management',responsibility:'Operate CAFM-ready data'},
+        {id:'AC-003',name:'Asset management',role:'Portfolio owner',organization:'Client',responsibility:'Evaluate portfolio KPIs'}]}}
     };
-
-    const defaultTables = {
-      usecases: {
-        label: 'Use cases',
-        description: 'First source table: practical BIM / digital building use cases to become RDF subjects.',
-        columns: ['id', 'name', 'description', 'process', 'product', 'input', 'output', 'priority'],
-        rows: [
-          { id: 'UC-001', name: 'BIM model quality check', description: 'Validate IFC models against project rules before handover.', process: 'Model checking', product: 'Solibri', input: 'IFC model', output: 'Issue report', priority: 'High' },
-          { id: 'UC-002', name: 'BIM2FM asset handover', description: 'Prepare asset data for operation and CAFM import.', process: 'Data handover', product: 'dRofus', input: 'Room and asset data', output: 'FM data package', priority: 'High' },
-          { id: 'UC-003', name: 'Digital twin portfolio view', description: 'Connect building data, systems and operational indicators.', process: 'Portfolio analytics', product: 'Power BI', input: 'Asset registry', output: 'Portfolio dashboard', priority: 'Medium' }
-        ]
-      },
-      products: {
-        label: 'Products',
-        description: 'Tools, platforms and systems that support the source use cases.',
-        columns: ['id', 'name', 'type', 'vendor', 'role', 'integration'],
-        rows: [
-          { id: 'PR-001', name: 'Solibri', type: 'Model checker', vendor: 'Nemetschek', role: 'Rule-based model validation', integration: 'BCF / IFC' },
-          { id: 'PR-002', name: 'dRofus', type: 'Data management', vendor: 'dRofus', role: 'Room and asset information', integration: 'API / Excel / IFC' },
-          { id: 'PR-003', name: 'Power BI', type: 'Analytics', vendor: 'Microsoft', role: 'Portfolio reporting', integration: 'CSV / SQL / API' }
-        ]
-      },
-      inputsOutputs: {
-        label: 'Inputs / Outputs',
-        description: 'Information objects used as RDF resources and table references.',
-        columns: ['id', 'name', 'kind', 'format', 'owner', 'qualityRule'],
-        rows: [
-          { id: 'IO-001', name: 'IFC model', kind: 'Input', format: 'IFC4 / IFC2x3', owner: 'Planner', qualityRule: 'Must pass model rules' },
-          { id: 'IO-002', name: 'Issue report', kind: 'Output', format: 'BCF / XLSX / PDF', owner: 'BIM coordination', qualityRule: 'Traceable by element and rule' },
-          { id: 'IO-003', name: 'FM data package', kind: 'Output', format: 'XLSX / CAFM import', owner: 'Operator', qualityRule: 'Complete asset attributes' },
-          { id: 'IO-004', name: 'Asset registry', kind: 'Input', format: 'SQL / XLSX', owner: 'Portfolio management', qualityRule: 'Unique IDs and lifecycle status' }
-        ]
-      },
-      processes: {
-        label: 'Processes',
-        description: 'Business and project processes connected to use cases, products and data objects.',
-        columns: ['id', 'name', 'phase', 'owner', 'kpi', 'evidence'],
-        rows: [
-          { id: 'PC-001', name: 'Model checking', phase: 'Design / construction', owner: 'BIM coordination', kpi: 'Open issues by severity', evidence: 'BCF report' },
-          { id: 'PC-002', name: 'Data handover', phase: 'Handover', owner: 'BIM2FM lead', kpi: 'Attribute completeness', evidence: 'Handover checklist' },
-          { id: 'PC-003', name: 'Portfolio analytics', phase: 'Operation', owner: 'Asset management', kpi: 'Data coverage by building', evidence: 'Dashboard export' }
-        ]
-      },
-      actors: {
-        label: 'Actors',
-        description: 'Stakeholders, responsible roles and data owners.',
-        columns: ['id', 'name', 'role', 'organization', 'responsibility'],
-        rows: [
-          { id: 'AC-001', name: 'BIM coordination', role: 'Quality owner', organization: 'Project', responsibility: 'Rules, BCF, coordination' },
-          { id: 'AC-002', name: 'Operator', role: 'Data receiver', organization: 'Facility management', responsibility: 'Operate CAFM-ready data' },
-          { id: 'AC-003', name: 'Asset management', role: 'Portfolio owner', organization: 'Client', responsibility: 'Evaluate portfolio KPIs' }
-        ]
-      }
-    };
-
-    let tables = loadTables();
-    let activeKey = 'usecases';
-    let sortState = { column: null, direction: 1 };
-    let positions = loadPositions();
-    let graphState = { scale: 1, tx: 0, ty: 0, selectedId: null, draggingNode: null, panning: false, pointerStart: null, moved: false };
-
-    const tabsEl = document.getElementById('tabs');
-    const tableWrap = document.getElementById('tableWrap');
-    const activeTitle = document.getElementById('activeTitle');
-    const activeDescription = document.getElementById('activeDescription');
-    const saveStatus = document.getElementById('saveStatus');
-    const graphSearch = document.getElementById('graphSearch');
-    const graphMeta = document.getElementById('graphMeta');
-    const nodeCard = document.getElementById('nodeCard');
-
-    function loadTables() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || structuredClone(defaultTables); }
-      catch { return structuredClone(defaultTables); }
-    }
-
-    function loadPositions() {
-      try { return JSON.parse(localStorage.getItem(POSITION_KEY)) || {}; }
-      catch { return {}; }
-    }
-
-    function savePositions() {
-      localStorage.setItem(POSITION_KEY, JSON.stringify(positions));
-    }
-
-    function saveTables() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
-      saveStatus.textContent = 'Saved';
-      renderGraph();
-    }
-
-    function markDirty() {
-      saveStatus.textContent = 'Saving...';
-      window.clearTimeout(markDirty.timeout);
-      markDirty.timeout = window.setTimeout(saveTables, 250);
-    }
-
-    function renderTabs() {
-      tabsEl.innerHTML = '';
-      Object.entries(tables).forEach(([key, table]) => {
-        const btn = document.createElement('button');
-        btn.className = 'tab';
-        btn.type = 'button';
-        btn.textContent = table.label;
-        btn.setAttribute('aria-selected', String(key === activeKey));
-        btn.addEventListener('click', () => { activeKey = key; sortState = { column: null, direction: 1 }; renderTabs(); renderTable(); });
-        tabsEl.appendChild(btn);
-      });
-    }
-
-    function renderTable() {
-      const table = tables[activeKey];
-      activeTitle.textContent = table.label;
-      activeDescription.textContent = table.description;
-      tableWrap.innerHTML = `
-        <table>
-          <thead><tr>${table.columns.map(column => `<th data-column="${escapeHtml(column)}">${escapeHtml(column)}${sortState.column === column ? (sortState.direction === 1 ? ' ↑' : ' ↓') : ''}</th>`).join('')}<th class="row-actions">Actions</th></tr></thead>
-          <tbody>${table.rows.map((row, rowIndex) => `<tr>${table.columns.map(column => `<td contenteditable="true" data-row="${rowIndex}" data-column="${escapeHtml(column)}">${escapeHtml(row[column] ?? '')}</td>`).join('')}<td class="row-actions"><button class="small-btn" type="button" data-delete="${rowIndex}">Delete</button></td></tr>`).join('')}</tbody>
-        </table>`;
-
-      tableWrap.querySelectorAll('th[data-column]').forEach(th => th.addEventListener('click', () => sortTable(th.dataset.column)));
-      tableWrap.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
-        cell.addEventListener('input', () => {
-          tables[activeKey].rows[Number(cell.dataset.row)][cell.dataset.column] = cell.textContent.trim();
-          markDirty();
-        });
-      });
-      tableWrap.querySelectorAll('[data-delete]').forEach(btn => btn.addEventListener('click', () => {
-        tables[activeKey].rows.splice(Number(btn.dataset.delete), 1);
-        saveTables(); renderTable();
-      }));
-    }
-
-    function sortTable(column) {
-      sortState = sortState.column === column ? { column, direction: sortState.direction * -1 } : { column, direction: 1 };
-      tables[activeKey].rows.sort((a, b) => String(a[column] ?? '').localeCompare(String(b[column] ?? ''), undefined, { numeric: true }) * sortState.direction);
-      saveTables(); renderTable();
-    }
-
-    function addRow() {
-      const table = tables[activeKey];
-      const row = Object.fromEntries(table.columns.map(column => [column, '']));
-      row.id = `${activeKey.slice(0, 2).toUpperCase()}-${String(table.rows.length + 1).padStart(3, '0')}`;
-      table.rows.push(row); saveTables(); renderTable();
-    }
-
-    function exportJson() {
-      const blob = new Blob([JSON.stringify(tables, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url; link.download = 'ipm-source-tables.json'; link.click(); URL.revokeObjectURL(url);
-    }
-
-    function resetData() {
-      tables = structuredClone(defaultTables);
-      positions = {};
-      graphState = { scale: 1, tx: 0, ty: 0, selectedId: null, draggingNode: null, panning: false, pointerStart: null, moved: false };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
-      localStorage.removeItem(POSITION_KEY);
-      renderTabs(); renderTable(); renderGraph(); renderNodeCard(null);
-    }
-
-    function buildGraph() {
-      const nodes = new Map();
-      const edges = [];
-      const rows = new Map();
-
-      function addNode(label, type, row = null) {
-        if (!label) return null;
-        const id = `${type}:${label}`;
-        if (!nodes.has(id)) nodes.set(id, { id, label, type, color: colors[type] || '#8e8e93', links: 0 });
-        if (row && !rows.has(id)) rows.set(id, row);
-        return id;
-      }
-
-      function addEdge(source, target, predicate) {
-        if (!source || !target || source === target) return;
-        edges.push({ id: `${source}|${predicate}|${target}`, source, target, predicate });
-        nodes.get(source).links += 1; nodes.get(target).links += 1;
-      }
-
-      tables.usecases.rows.forEach(row => {
-        const usecase = addNode(row.name || row.id, 'usecase', row);
-        const product = addNode(row.product, 'product');
-        const input = addNode(row.input, 'input');
-        const output = addNode(row.output, 'output');
-        const process = addNode(row.process, 'process');
-        addEdge(usecase, process, 'belongsToProcess'); addEdge(usecase, product, 'usesProduct'); addEdge(input, usecase, 'feedsUseCase'); addEdge(usecase, output, 'produces');
-      });
-
-      tables.processes.rows.forEach(row => {
-        const process = addNode(row.name || row.id, 'process', row);
-        const owner = addNode(row.owner, 'actor');
-        const evidence = addNode(row.evidence, 'evidence');
-        addEdge(process, owner, 'ownedBy'); addEdge(process, evidence, 'documentedBy');
-      });
-
-      tables.products.rows.forEach(row => rows.set(`product:${row.name}`, row));
-      tables.inputsOutputs.rows.forEach(row => rows.set(`${String(row.kind || '').toLowerCase() === 'output' ? 'output' : 'input'}:${row.name}`, row));
-      tables.actors.rows.forEach(row => rows.set(`actor:${row.name}`, row));
-
-      return { nodes: Array.from(nodes.values()), edges, rows };
-    }
-
-    function visibleGraph() {
-      const graph = buildGraph();
-      const filter = graphSearch.value.trim().toLowerCase();
-      let nodes = graph.nodes;
-      let edges = graph.edges;
-      if (filter) {
-        const keep = new Set(nodes.filter(node => node.label.toLowerCase().includes(filter) || node.type.includes(filter)).map(node => node.id));
-        edges = edges.filter(edge => keep.has(edge.source) || keep.has(edge.target));
-        edges.forEach(edge => { keep.add(edge.source); keep.add(edge.target); });
-        nodes = nodes.filter(node => keep.has(node.id));
-      }
-      return { nodes, edges, rows: graph.rows };
-    }
-
-    function layoutNodes(nodes, width, height) {
-      const center = { x: width / 2, y: height / 2 };
-      const radius = Math.min(width, height) * 0.36;
-      const typeOrder = ['usecase', 'process', 'product', 'input', 'output', 'actor', 'evidence'];
-      nodes.forEach((node, i) => {
-        const stored = positions[node.id];
-        if (stored) { node.x = stored.x; node.y = stored.y; }
-        else {
-          const angle = (i / Math.max(nodes.length, 1)) * Math.PI * 2 + Math.max(typeOrder.indexOf(node.type), 0) * 0.44;
-          const weight = Math.min(node.links, 6) / 6;
-          node.x = center.x + Math.cos(angle) * radius * (0.55 + weight * 0.55);
-          node.y = center.y + Math.sin(angle) * radius * (0.55 + weight * 0.55);
-        }
-        node.r = 12 + Math.min(node.links, 6) * 2.4;
-      });
-    }
-
-    function renderGraph() {
-      const svg = document.getElementById('graph');
-      const rect = svg.getBoundingClientRect();
-      const width = Math.max(rect.width || 900, 320);
-      const height = Math.max(rect.height || 420, 260);
-      const { nodes, edges } = visibleGraph();
-      layoutNodes(nodes, width, height);
-      const nodeIndex = new Map(nodes.map(node => [node.id, node]));
-      const selected = graphState.selectedId;
-      const selectedEdges = new Set(edges.filter(e => e.source === selected || e.target === selected).map(e => e.id));
-      const relatedNodes = new Set([selected]);
-      edges.forEach(e => { if (e.source === selected || e.target === selected) { relatedNodes.add(e.source); relatedNodes.add(e.target); } });
-      const hasSelection = Boolean(selected && nodeIndex.has(selected));
-
-      const edgeMarkup = edges.map(edge => {
-        const s = nodeIndex.get(edge.source), t = nodeIndex.get(edge.target);
-        if (!s || !t) return '';
-        const mx = (s.x + t.x) / 2, my = (s.y + t.y) / 2;
-        const state = hasSelection ? (selectedEdges.has(edge.id) ? 'active' : 'dimmed') : '';
-        return `<line class="edge ${state}" x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}"/><text class="edge-label ${state}" x="${mx}" y="${my}">${escapeHtml(edge.predicate)}</text>`;
-      }).join('');
-
-      const nodeMarkup = nodes.map(node => {
-        const state = hasSelection ? (node.id === selected ? 'active' : (relatedNodes.has(node.id) ? '' : 'dimmed')) : '';
-        return `<g class="node ${state}" data-node-id="${escapeHtml(node.id)}" transform="translate(${node.x},${node.y})"><circle r="${node.r}" fill="${node.color}" opacity="0.92"></circle><text y="${node.r + 16}" text-anchor="middle">${escapeHtml(shortLabel(node.label, 24))}</text><text class="type" y="${node.r + 31}" text-anchor="middle">${escapeHtml(node.type)}</text></g>`;
-      }).join('');
-
-      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-      svg.innerHTML = `<g id="viewport" transform="translate(${graphState.tx},${graphState.ty}) scale(${graphState.scale})"><g>${edgeMarkup}</g><g>${nodeMarkup}</g></g>`;
-      graphMeta.textContent = `${nodes.length} nodes · ${edges.length} triples · ${Math.round(graphState.scale * 100)}%`;
-      wireGraphEvents(svg);
-      if (hasSelection) renderNodeCard(selected); else renderNodeCard(null);
-    }
-
-    function wireGraphEvents(svg) {
-      svg.querySelectorAll('.node').forEach(nodeEl => {
-        nodeEl.addEventListener('pointerdown', event => {
-          event.stopPropagation();
-          const id = nodeEl.dataset.nodeId;
-          graphState.draggingNode = id;
-          graphState.pointerStart = pointerInfo(event, svg);
-          graphState.moved = false;
-          nodeEl.setPointerCapture(event.pointerId);
-          nodeEl.classList.add('dragging');
-        });
-      });
-
-      svg.onpointerdown = event => {
-        if (event.target.closest('.node')) return;
-        graphState.panning = true;
-        graphState.pointerStart = pointerInfo(event, svg);
-        graphState.moved = false;
-        svg.setPointerCapture(event.pointerId);
-      };
-
-      svg.onpointermove = event => {
-        if (!graphState.pointerStart) return;
-        const current = pointerInfo(event, svg);
-        const dx = current.screenX - graphState.pointerStart.screenX;
-        const dy = current.screenY - graphState.pointerStart.screenY;
-        if (Math.abs(dx) + Math.abs(dy) > 3) graphState.moved = true;
-
-        if (graphState.draggingNode) {
-          positions[graphState.draggingNode] = { x: current.worldX, y: current.worldY };
-          savePositions();
-          renderGraph();
-        } else if (graphState.panning) {
-          graphState.tx += dx;
-          graphState.ty += dy;
-          graphState.pointerStart = current;
-          renderGraph();
-        }
-      };
-
-      svg.onpointerup = event => {
-        const nodeEl = event.target.closest('.node');
-        if (graphState.draggingNode && !graphState.moved && nodeEl) {
-          graphState.selectedId = nodeEl.dataset.nodeId;
-        } else if (graphState.panning && !graphState.moved) {
-          graphState.selectedId = null;
-        }
-        graphState.draggingNode = null;
-        graphState.panning = false;
-        graphState.pointerStart = null;
-        renderGraph();
-      };
-
-      svg.onwheel = event => {
-        event.preventDefault();
-        const before = pointerInfo(event, svg);
-        const factor = event.deltaY < 0 ? 1.12 : 0.89;
-        const newScale = Math.min(3.2, Math.max(0.35, graphState.scale * factor));
-        graphState.tx = before.screenX - before.worldX * newScale;
-        graphState.ty = before.screenY - before.worldY * newScale;
-        graphState.scale = newScale;
-        renderGraph();
-      };
-    }
-
-    function pointerInfo(event, svg) {
-      const rect = svg.getBoundingClientRect();
-      const screenX = event.clientX - rect.left;
-      const screenY = event.clientY - rect.top;
-      return { screenX, screenY, worldX: (screenX - graphState.tx) / graphState.scale, worldY: (screenY - graphState.ty) / graphState.scale };
-    }
-
-    function renderNodeCard(id) {
-      if (!id) { nodeCard.classList.remove('visible'); nodeCard.innerHTML = ''; return; }
-      const { nodes, edges, rows } = visibleGraph();
-      const node = nodes.find(n => n.id === id);
-      if (!node) { nodeCard.classList.remove('visible'); return; }
-      const row = rows.get(id) || {};
-      const connected = edges.filter(e => e.source === id || e.target === id);
-      nodeCard.classList.add('visible');
-      nodeCard.innerHTML = `<header><div><h2>${escapeHtml(node.label)}</h2><p>${escapeHtml(node.type)} · ${connected.length} connected triples</p></div><button class="close" type="button" aria-label="Close">×</button></header><dl><dt>ID</dt><dd>${escapeHtml(node.id)}</dd>${Object.entries(row).slice(0, 8).map(([key, value]) => `<dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd>`).join('')}<dt>Triples</dt><dd>${connected.map(e => escapeHtml(e.predicate)).join(', ') || 'None'}</dd></dl>`;
-      nodeCard.querySelector('.close').addEventListener('click', () => { graphState.selectedId = null; renderGraph(); });
-    }
-
-    function fitGraph() {
-      graphState.scale = 1;
-      graphState.tx = 0;
-      graphState.ty = 0;
-      graphState.selectedId = null;
-      renderGraph();
-    }
-
-    function shortLabel(value, max) {
-      const text = String(value ?? '');
-      return text.length > max ? `${text.slice(0, max - 1)}…` : text;
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-    }
-
-    document.getElementById('addRow').addEventListener('click', addRow);
-    document.getElementById('exportJson').addEventListener('click', exportJson);
-    document.getElementById('resetData').addEventListener('click', resetData);
-    document.getElementById('fitGraph').addEventListener('click', fitGraph);
-    graphSearch.addEventListener('input', () => { graphState.selectedId = null; renderGraph(); });
-    window.addEventListener('resize', () => window.requestAnimationFrame(renderGraph));
-
-    renderTabs();
-    renderTable();
-    renderGraph();
+    let tables=loadTables(),activeKey='usecases',sortState={column:null,direction:1},positions=loadPositions(),layoutMode=localStorage.getItem(LAYOUT_KEY)||'topic';
+    let graphState={scale:1,tx:0,ty:0,selectedId:null,draggingNode:null,panning:false,pointerStart:null,moved:false};
+    const tabsEl=document.getElementById('tabs'),tableWrap=document.getElementById('tableWrap'),activeTitle=document.getElementById('activeTitle'),activeDescription=document.getElementById('activeDescription'),saveStatus=document.getElementById('saveStatus'),graphSearch=document.getElementById('graphSearch'),graphMeta=document.getElementById('graphMeta'),nodeCard=document.getElementById('nodeCard'),layoutModeSelect=document.getElementById('layoutMode');
+    layoutModeSelect.value=layoutMode;
+    function loadTables(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||structuredClone(defaultTables)}catch{return structuredClone(defaultTables)}}
+    function loadPositions(){try{return JSON.parse(localStorage.getItem(POSITION_KEY))||{}}catch{return{}}}
+    function savePositions(){localStorage.setItem(POSITION_KEY,JSON.stringify(positions))}
+    function saveTables(){localStorage.setItem(STORAGE_KEY,JSON.stringify(tables));saveStatus.textContent='Saved';renderGraph()}
+    function markDirty(){saveStatus.textContent='Saving...';clearTimeout(markDirty.t);markDirty.t=setTimeout(saveTables,250)}
+    function renderTabs(){tabsEl.innerHTML='';Object.entries(tables).forEach(([key,table])=>{const b=document.createElement('button');b.className='tab';b.type='button';b.textContent=table.label;b.setAttribute('aria-selected',String(key===activeKey));b.onclick=()=>{activeKey=key;sortState={column:null,direction:1};renderTabs();renderTable()};tabsEl.appendChild(b)})}
+    function renderTable(){const table=tables[activeKey];activeTitle.textContent=table.label;activeDescription.textContent=table.description;tableWrap.innerHTML=`<table><thead><tr>${table.columns.map(c=>`<th data-column="${escapeHtml(c)}">${escapeHtml(c)}${sortState.column===c?(sortState.direction===1?' ↑':' ↓'):''}</th>`).join('')}<th class="row-actions">Actions</th></tr></thead><tbody>${table.rows.map((r,i)=>`<tr>${table.columns.map(c=>`<td contenteditable="true" data-row="${i}" data-column="${escapeHtml(c)}">${escapeHtml(r[c]??'')}</td>`).join('')}<td class="row-actions"><button class="small-btn" type="button" data-delete="${i}">Delete</button></td></tr>`).join('')}</tbody></table>`;tableWrap.querySelectorAll('th[data-column]').forEach(th=>th.onclick=()=>sortTable(th.dataset.column));tableWrap.querySelectorAll('td[contenteditable=true]').forEach(cell=>cell.oninput=()=>{tables[activeKey].rows[Number(cell.dataset.row)][cell.dataset.column]=cell.textContent.trim();markDirty()});tableWrap.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{tables[activeKey].rows.splice(Number(b.dataset.delete),1);saveTables();renderTable()})}
+    function sortTable(column){sortState=sortState.column===column?{column,direction:sortState.direction*-1}:{column,direction:1};tables[activeKey].rows.sort((a,b)=>String(a[column]??'').localeCompare(String(b[column]??''),undefined,{numeric:true})*sortState.direction);saveTables();renderTable()}
+    function addRow(){const t=tables[activeKey],row=Object.fromEntries(t.columns.map(c=>[c,'']));row.id=`${activeKey.slice(0,2).toUpperCase()}-${String(t.rows.length+1).padStart(3,'0')}`;t.rows.push(row);saveTables();renderTable()}
+    function exportJson(){const blob=new Blob([JSON.stringify(tables,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ipm-source-tables.json';a.click();URL.revokeObjectURL(url)}
+    function resetData(){tables=structuredClone(defaultTables);positions={};layoutMode='topic';layoutModeSelect.value=layoutMode;graphState={scale:1,tx:0,ty:0,selectedId:null,draggingNode:null,panning:false,pointerStart:null,moved:false};localStorage.setItem(STORAGE_KEY,JSON.stringify(tables));localStorage.removeItem(POSITION_KEY);localStorage.setItem(LAYOUT_KEY,layoutMode);renderTabs();renderTable();renderGraph();renderNodeCard(null)}
+    function buildGraph(){const nodes=new Map(),edges=[],rows=new Map();function addNode(label,type,row=null,topic=null){if(!label)return null;const id=`${type}:${label}`;if(!nodes.has(id))nodes.set(id,{id,label,type,color:colors[type]||'#8e8e93',links:0,topics:new Set});if(topic)nodes.get(id).topics.add(topic);if(row&&!rows.has(id))rows.set(id,row);return id}function addEdge(source,target,predicate,topic=null){if(!source||!target||source===target)return;edges.push({id:`${source}|${predicate}|${target}`,source,target,predicate,topic});nodes.get(source).links++;nodes.get(target).links++}tables.usecases.rows.forEach(row=>{const topic=row.name||row.id,uc=addNode(topic,'usecase',row,topic),pr=addNode(row.product,'product',null,topic),inp=addNode(row.input,'input',null,topic),out=addNode(row.output,'output',null,topic),pc=addNode(row.process,'process',null,topic);addEdge(uc,pc,'belongsToProcess',topic);addEdge(uc,pr,'usesProduct',topic);addEdge(inp,uc,'feedsUseCase',topic);addEdge(uc,out,'produces',topic)});tables.processes.rows.forEach(row=>{const pc=addNode(row.name||row.id,'process',row),owner=addNode(row.owner,'actor'),ev=addNode(row.evidence,'evidence');addEdge(pc,owner,'ownedBy');addEdge(pc,ev,'documentedBy')});tables.products.rows.forEach(row=>rows.set(`product:${row.name}`,row));tables.inputsOutputs.rows.forEach(row=>rows.set(`${String(row.kind||'').toLowerCase()==='output'?'output':'input'}:${row.name}`,row));tables.actors.rows.forEach(row=>rows.set(`actor:${row.name}`,row));nodes.forEach(n=>{n.topics=[...n.topics];n.primaryTopic=n.topics[0]||'Shared lifecycle resources'});return{nodes:[...nodes.values()],edges,rows}}
+    function visibleGraph(){const g=buildGraph(),q=graphSearch.value.trim().toLowerCase();let nodes=g.nodes,edges=g.edges;if(q){const keep=new Set(nodes.filter(n=>n.label.toLowerCase().includes(q)||n.type.includes(q)||n.primaryTopic.toLowerCase().includes(q)).map(n=>n.id));edges=edges.filter(e=>keep.has(e.source)||keep.has(e.target));edges.forEach(e=>{keep.add(e.source);keep.add(e.target)});nodes=nodes.filter(n=>keep.has(n.id))}return{nodes,edges,rows:g.rows}}
+    function layoutNodes(nodes,width,height){nodes.forEach(n=>n.r=12+Math.min(n.links,6)*2.4);if(layoutMode==='manual')layoutManual(nodes,width,height);else if(layoutMode==='type')layoutByType(nodes,width,height);else if(layoutMode==='radial')layoutRadial(nodes,width,height);else layoutByTopic(nodes,width,height);preventOverlap(nodes,width,height,44,80);if(layoutMode!=='manual')nodes.forEach(n=>positions[n.id]={x:n.x,y:n.y});savePositions();return clusterBounds(nodes)}
+    function layoutManual(nodes,w,h){const c={x:w/2,y:h/2},r=Math.min(w,h)*.36;nodes.forEach((n,i)=>{const p=positions[n.id];if(p){n.x=p.x;n.y=p.y}else{const a=i/Math.max(nodes.length,1)*Math.PI*2;n.x=c.x+Math.cos(a)*r;n.y=c.y+Math.sin(a)*r}})}
+    function layoutRadial(nodes,w,h){const c={x:w/2,y:h/2},rings={usecase:.18,process:.35,product:.5,input:.65,output:.65,actor:.82,evidence:.82},by=groupBy(nodes,n=>n.type);Object.entries(by).forEach(([type,group])=>{const r=Math.min(w,h)*(rings[type]||.7);group.forEach((n,i)=>{const a=i/Math.max(group.length,1)*Math.PI*2+typeWeight(type)*.29;n.x=c.x+Math.cos(a)*r;n.y=c.y+Math.sin(a)*r})})}
+    function layoutByType(nodes,w,h){const order=['usecase','process','product','input','output','actor','evidence'],by=groupBy(nodes,n=>n.type),lanes=order.filter(t=>by[t]?.length).concat(Object.keys(by).filter(t=>!order.includes(t)));lanes.forEach((type,li)=>{const group=by[type],x=(li+1)/(lanes.length+1)*w;group.forEach((n,i)=>{n.x=x+(i%2?24:-24);n.y=(i+1)/(group.length+1)*h;n.cluster=prettyType(type)})})}
+    function layoutByTopic(nodes,w,h){const topics=tables.usecases.rows.map(r=>r.name||r.id).filter(Boolean),cols=Math.ceil(Math.sqrt(Math.max(topics.length,1))),rows=Math.ceil(Math.max(topics.length,1)/cols),cellW=w/cols,cellH=h/rows,centers=new Map;topics.forEach((t,i)=>centers.set(t,{x:(i%cols)*cellW+cellW/2,y:Math.floor(i/cols)*cellH+cellH/2}));const by=groupBy(nodes,n=>n.primaryTopic||topics[0]||'IPM');Object.entries(by).forEach(([topic,group])=>{const c=centers.get(topic)||{x:w/2,y:h/2};group.sort((a,b)=>typeWeight(a.type)-typeWeight(b.type));group.forEach((n,i)=>{if(n.type==='usecase'){n.x=c.x;n.y=c.y}else{const a=i/Math.max(group.length-1,1)*Math.PI*2+typeWeight(n.type)*.46,r=Math.min(cellW,cellH)*(.2+Math.min(i,6)*.035);n.x=c.x+Math.cos(a)*r;n.y=c.y+Math.sin(a)*r}n.cluster=topic})})}
+    function preventOverlap(nodes,w,h,pad=42,it=60){for(let step=0;step<it;step++){let moved=false;for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j],min=a.r+b.r+pad;let dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy)||.01;if(dist<min){const push=(min-dist)/2;dx/=dist;dy/=dist;a.x-=dx*push;a.y-=dy*push;b.x+=dx*push;b.y+=dy*push;moved=true}}nodes.forEach(n=>{n.x=Math.min(w-n.r-32,Math.max(n.r+32,n.x));n.y=Math.min(h-n.r-52,Math.max(n.r+46,n.y))});if(!moved)break}}
+    function clusterBounds(nodes){if(layoutMode==='manual'||layoutMode==='radial')return[];const by=groupBy(nodes.filter(n=>n.cluster),n=>n.cluster);return Object.entries(by).map(([label,g])=>{const pad=48,minX=Math.min(...g.map(n=>n.x-n.r))-pad,maxX=Math.max(...g.map(n=>n.x+n.r))+pad,minY=Math.min(...g.map(n=>n.y-n.r))-pad,maxY=Math.max(...g.map(n=>n.y+n.r))+pad;return{label,x:minX,y:minY,w:maxX-minX,h:maxY-minY}})}
+    function renderGraph(){const svg=document.getElementById('graph'),rect=svg.getBoundingClientRect(),w=Math.max(rect.width||900,320),h=Math.max(rect.height||420,260),{nodes,edges}=visibleGraph(),clusters=layoutNodes(nodes,w,h),idx=new Map(nodes.map(n=>[n.id,n])),sel=graphState.selectedId,selEdges=new Set(edges.filter(e=>e.source===sel||e.target===sel).map(e=>e.id)),related=new Set([sel]);edges.forEach(e=>{if(e.source===sel||e.target===sel){related.add(e.source);related.add(e.target)}});const has=Boolean(sel&&idx.has(sel)),cm=clusters.map(c=>`<g><rect class="cluster-bg" x="${c.x}" y="${c.y}" width="${c.w}" height="${c.h}" rx="28"></rect><text class="cluster-label" x="${c.x+18}" y="${c.y+28}">${escapeHtml(shortLabel(c.label,38))}</text></g>`).join(''),em=edges.map(e=>{const s=idx.get(e.source),t=idx.get(e.target);if(!s||!t)return'';const state=has?(selEdges.has(e.id)?'active':'dimmed'):'',mx=(s.x+t.x)/2,my=(s.y+t.y)/2;return`<line class="edge ${state}" x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}"/><text class="edge-label ${state}" x="${mx}" y="${my}">${escapeHtml(e.predicate)}</text>`}).join(''),nm=nodes.map(n=>{const state=has?(n.id===sel?'active':(related.has(n.id)?'':'dimmed')):'';return`<g class="node ${state}" data-node-id="${escapeHtml(n.id)}" transform="translate(${n.x},${n.y})"><circle r="${n.r}" fill="${n.color}" opacity=".92"></circle><text y="${n.r+16}" text-anchor="middle">${escapeHtml(shortLabel(n.label,24))}</text><text class="type" y="${n.r+31}" text-anchor="middle">${escapeHtml(n.type)}</text></g>`}).join('');svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.innerHTML=`<g id="viewport" transform="translate(${graphState.tx},${graphState.ty}) scale(${graphState.scale})"><g>${cm}</g><g>${em}</g><g>${nm}</g></g>`;graphMeta.textContent=`${nodes.length} nodes · ${edges.length} relations · ${Math.round(graphState.scale*100)}% · ${layoutModeLabel()}`;wireGraphEvents(svg);if(has)renderNodeCard(sel);else renderNodeCard(null)}
+    function wireGraphEvents(svg){svg.querySelectorAll('.node').forEach(el=>{el.onpointerdown=e=>{e.stopPropagation();graphState.draggingNode=el.dataset.nodeId;graphState.pointerStart=pointerInfo(e,svg);graphState.moved=false;el.setPointerCapture(e.pointerId);el.classList.add('dragging')}});svg.onpointerdown=e=>{if(e.target.closest('.node'))return;graphState.panning=true;graphState.pointerStart=pointerInfo(e,svg);graphState.moved=false;svg.setPointerCapture(e.pointerId)};svg.onpointermove=e=>{if(!graphState.pointerStart)return;const cur=pointerInfo(e,svg),dx=cur.screenX-graphState.pointerStart.screenX,dy=cur.screenY-graphState.pointerStart.screenY;if(Math.abs(dx)+Math.abs(dy)>3)graphState.moved=true;if(graphState.draggingNode){positions[graphState.draggingNode]={x:cur.worldX,y:cur.worldY};layoutMode='manual';layoutModeSelect.value='manual';localStorage.setItem(LAYOUT_KEY,layoutMode);savePositions();renderGraph()}else if(graphState.panning){graphState.tx+=dx;graphState.ty+=dy;graphState.pointerStart=cur;renderGraph()}};svg.onpointerup=e=>{const node=e.target.closest('.node');if(graphState.draggingNode&&!graphState.moved&&node)graphState.selectedId=node.dataset.nodeId;else if(graphState.panning&&!graphState.moved)graphState.selectedId=null;graphState.draggingNode=null;graphState.panning=false;graphState.pointerStart=null;renderGraph()};svg.onwheel=e=>{e.preventDefault();const before=pointerInfo(e,svg),factor=e.deltaY<0?1.12:.89,newScale=Math.min(3.2,Math.max(.35,graphState.scale*factor));graphState.tx=before.screenX-before.worldX*newScale;graphState.ty=before.screenY-before.worldY*newScale;graphState.scale=newScale;renderGraph()}}
+    function pointerInfo(e,svg){const r=svg.getBoundingClientRect(),screenX=e.clientX-r.left,screenY=e.clientY-r.top;return{screenX,screenY,worldX:(screenX-graphState.tx)/graphState.scale,worldY:(screenY-graphState.ty)/graphState.scale}}
+    function renderNodeCard(id){if(!id){nodeCard.classList.remove('visible');nodeCard.innerHTML='';return}const{nodes,edges,rows}=visibleGraph(),node=nodes.find(n=>n.id===id);if(!node){nodeCard.classList.remove('visible');return}const row=rows.get(id)||{},connected=edges.filter(e=>e.source===id||e.target===id);nodeCard.classList.add('visible');nodeCard.innerHTML=`<header><div><h2>${escapeHtml(node.label)}</h2><p>${escapeHtml(node.type)} · ${connected.length} connected relations</p></div><button class="close" type="button" aria-label="Close">×</button></header><dl><dt>ID</dt><dd>${escapeHtml(node.id)}</dd>${Object.entries(row).slice(0,8).map(([k,v])=>`<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('')}<dt>Relations</dt><dd>${connected.map(e=>escapeHtml(e.predicate)).join(', ')||'None'}</dd></dl>`;nodeCard.querySelector('.close').onclick=()=>{graphState.selectedId=null;renderGraph()}}
+    function autoArrange(){positions={};graphState.selectedId=null;layoutMode=layoutModeSelect.value;localStorage.setItem(LAYOUT_KEY,layoutMode);localStorage.removeItem(POSITION_KEY);renderGraph()}
+    function fitGraph(){graphState.scale=1;graphState.tx=0;graphState.ty=0;graphState.selectedId=null;renderGraph()}
+    function groupBy(arr,fn){return arr.reduce((m,x)=>((m[fn(x)]??=[]).push(x),m),{})}
+    function typeWeight(t){return{usecase:0,process:1,product:2,input:3,output:4,actor:5,evidence:6}[t]??7}
+    function prettyType(t){return({usecase:'Use cases',process:'Processes',product:'Products',input:'Inputs',output:'Outputs',actor:'Actors',evidence:'Evidence'}[t]||t)}
+    function layoutModeLabel(){return({topic:'Story clusters',type:'Data lanes',radial:'Impact radar',manual:'Manual'}[layoutMode]||layoutMode)}
+    function shortLabel(v,max){const s=String(v??'');return s.length>max?`${s.slice(0,max-1)}…`:s}
+    function escapeHtml(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+    document.getElementById('addRow').onclick=addRow;document.getElementById('exportJson').onclick=exportJson;document.getElementById('resetData').onclick=resetData;document.getElementById('fitGraph').onclick=fitGraph;document.getElementById('arrangeGraph').onclick=autoArrange;layoutModeSelect.onchange=autoArrange;graphSearch.oninput=()=>{graphState.selectedId=null;renderGraph()};window.onresize=()=>requestAnimationFrame(renderGraph);renderTabs();renderTable();renderGraph();
   </script>
 </body>
 </html>
