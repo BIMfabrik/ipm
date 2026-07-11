@@ -25,19 +25,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject IPM enhancements
+      - name: Inject IPM enhancements and deployment version
         run: |
           python - <<'PY'
+          import os
+          import re
           from pathlib import Path
 
           page = Path('index.html')
           html = page.read_text(encoding='utf-8')
+          commit_sha = os.environ.get('GITHUB_SHA', 'unknown')
+          short_sha = commit_sha[:7]
 
           # Keep Galaxy visible even if a browser delays or caches enhancement JS.
           orbit = '<option value="orbit">3D orbit</option>'
           galaxy = '<option value="galaxy">Galaxy showcase</option>'
           if galaxy not in html:
               html = html.replace(orbit, orbit + galaxy)
+
+          # Expose the exact deployed revision in page metadata and visibly below IPM.
+          html = re.sub(r'\s*<meta name="ipm-deploy-commit"[^>]*>', '', html)
+          html = html.replace(
+              '</head>',
+              f'<meta name="ipm-deploy-commit" content="{commit_sha}">\n</head>',
+          )
+          html = re.sub(r'<span id="deployCommit"[^>]*>.*?</span>', '', html)
+          badge = (
+              f'<span id="deployCommit" title="Deployed commit {commit_sha}" '
+              'style="position:absolute;left:42px;top:34px;z-index:2;'
+              'font:600 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;'
+              'letter-spacing:.04em;color:#6ee7ff;opacity:.78;white-space:nowrap;'
+              'pointer-events:none">'
+              f'@{short_sha}</span>'
+          )
+          html = html.replace('<span>IPM</span>', '<span>IPM</span>' + badge, 1)
 
           old_sources = [
               './mobile-anchor-fix.js',
@@ -46,7 +67,6 @@ jobs:
               './galaxy-mode-v1.js',
           ]
           for source in old_sources:
-              import re
               html = re.sub(
                   rf'<script src="{re.escape(source)}(?:\?[^\"]*)?"></script>\s*',
                   '',
@@ -54,9 +74,9 @@ jobs:
               )
 
           tags = [
-              '<script src="./ipm-enhancements-v2.js?v=20260711-4"></script>',
-              '<script src="./galaxy-mode-v1.js?v=20260711-1"></script>',
-              '<script src="./graph-stability-v1.js?v=20260711-2"></script>',
+              '<script src="./ipm-enhancements-v2.js?v=20260711-5"></script>',
+              '<script src="./galaxy-mode-v1.js?v=20260711-2"></script>',
+              '<script src="./graph-stability-v1.js?v=20260711-3"></script>',
           ]
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>')
           page.write_text(html, encoding='utf-8')
