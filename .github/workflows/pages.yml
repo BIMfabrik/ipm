@@ -24,6 +24,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject mobile graph navigation fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('index.html')
+          html = page.read_text(encoding='utf-8')
+          tag = '<script src="./mobile-anchor-fix.js"></script>'
+          if tag not in html:
+              html = html.replace('</body>', f'{tag}\n</body>')
+              page.write_text(html, encoding='utf-8')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
