@@ -25,17 +25,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject mobile navigation and galaxy enhancement
+      - name: Inject cache-busted IPM enhancements
         run: |
           python - <<'PY'
           from pathlib import Path
 
           page = Path('index.html')
           html = page.read_text(encoding='utf-8')
-          tag = '<script src="./mobile-anchor-fix.js"></script>'
-          if tag not in html:
-              html = html.replace('</body>', f'{tag}\n</body>')
-              page.write_text(html, encoding='utf-8')
+          old_tags = [
+              '<script src="./mobile-anchor-fix.js"></script>',
+              '<script src="./ipm-enhancements-v2.js"></script>',
+          ]
+          for old_tag in old_tags:
+              html = html.replace(old_tag, '')
+
+          tag = '<script src="./ipm-enhancements-v2.js?v=20260711-2"></script>'
+          html = html.replace('</body>', f'{tag}\n</body>')
+          page.write_text(html, encoding='utf-8')
           PY
 
       - name: Setup Pages
