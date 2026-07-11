@@ -43,22 +43,33 @@ jobs:
           if galaxy not in html:
               html = html.replace(orbit, orbit + galaxy)
 
-          # Expose the exact deployed revision in page metadata and visibly below IPM.
+          # Expose the exact deployed revision in metadata and in the footer.
           html = re.sub(r'\s*<meta name="ipm-deploy-commit"[^>]*>', '', html)
           html = html.replace(
               '</head>',
               f'<meta name="ipm-deploy-commit" content="{commit_sha}">\n</head>',
           )
-          html = re.sub(r'<span id="deployCommit"[^>]*>.*?</span>', '', html)
-          badge = (
-              f'<span id="deployCommit" title="Deployed commit {commit_sha}" '
-              'style="position:absolute;left:42px;top:34px;z-index:2;'
-              'font:600 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;'
-              'letter-spacing:.04em;color:#6ee7ff;opacity:.78;white-space:nowrap;'
-              'pointer-events:none">'
-              f'@{short_sha}</span>'
+
+          # Remove a previously injected header/footer badge before reinserting it.
+          html = re.sub(
+              r'<(?:span|a) id="deployCommit"[^>]*>.*?</(?:span|a)>',
+              '',
+              html,
           )
-          html = html.replace('<span>IPM</span>', '<span>IPM</span>' + badge, 1)
+          badge = (
+              f'<a id="deployCommit" '
+              f'href="https://github.com/BIMfabrik/ipm/commit/{commit_sha}" '
+              'target="_blank" rel="noopener" '
+              f'title="Deployed commit {commit_sha}" '
+              'style="font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;'
+              'letter-spacing:.04em;color:#6ee7ff;opacity:.82;white-space:nowrap">'
+              f'deployed @{short_sha}</a>'
+          )
+          html = html.replace(
+              '</footer>',
+              f'<span>{badge}</span></footer>',
+              1,
+          )
 
           old_sources = [
               './mobile-anchor-fix.js',
@@ -74,9 +85,9 @@ jobs:
               )
 
           tags = [
-              '<script src="./ipm-enhancements-v2.js?v=20260711-5"></script>',
-              '<script src="./galaxy-mode-v1.js?v=20260711-2"></script>',
-              '<script src="./graph-stability-v1.js?v=20260711-3"></script>',
+              '<script src="./ipm-enhancements-v2.js?v=20260711-6"></script>',
+              '<script src="./galaxy-mode-v1.js?v=20260711-3"></script>',
+              '<script src="./graph-stability-v1.js?v=20260711-4"></script>',
           ]
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>')
           page.write_text(html, encoding='utf-8')
