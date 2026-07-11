@@ -25,25 +25,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject cache-busted IPM enhancements
+      - name: Inject IPM enhancements
         run: |
           python - <<'PY'
           from pathlib import Path
 
           page = Path('index.html')
           html = page.read_text(encoding='utf-8')
-          old_tags = [
-              '<script src="./mobile-anchor-fix.js"></script>',
-              '<script src="./ipm-enhancements-v2.js"></script>',
-              '<script src="./ipm-enhancements-v2.js?v=20260711-2"></script>',
-              '<script src="./graph-stability-v1.js"></script>',
+
+          # Keep Galaxy visible even if a browser delays or caches enhancement JS.
+          orbit = '<option value="orbit">3D orbit</option>'
+          galaxy = '<option value="galaxy">Galaxy showcase</option>'
+          if galaxy not in html:
+              html = html.replace(orbit, orbit + galaxy)
+
+          old_sources = [
+              './mobile-anchor-fix.js',
+              './ipm-enhancements-v2.js',
+              './graph-stability-v1.js',
+              './galaxy-mode-v1.js',
           ]
-          for old_tag in old_tags:
-              html = html.replace(old_tag, '')
+          for source in old_sources:
+              import re
+              html = re.sub(
+                  rf'<script src="{re.escape(source)}(?:\?[^\"]*)?"></script>\s*',
+                  '',
+                  html,
+              )
 
           tags = [
-              '<script src="./ipm-enhancements-v2.js?v=20260711-2"></script>',
-              '<script src="./graph-stability-v1.js?v=20260711-1"></script>',
+              '<script src="./ipm-enhancements-v2.js?v=20260711-4"></script>',
+              '<script src="./galaxy-mode-v1.js?v=20260711-1"></script>',
+              '<script src="./graph-stability-v1.js?v=20260711-2"></script>',
           ]
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>')
           page.write_text(html, encoding='utf-8')
