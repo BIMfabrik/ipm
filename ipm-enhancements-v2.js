@@ -83,11 +83,11 @@
 
     const style = document.createElement('style');
     style.textContent = `
-      .insight-card{display:block;min-height:170px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-      .insight-card:hover{transform:translateY(-4px);border-color:rgba(110,231,255,.45);box-shadow:0 22px 60px rgba(0,0,0,.28)}
-      .galaxy-badge{position:absolute;right:16px;bottom:16px;z-index:6;border:1px solid rgba(110,231,255,.28);border-radius:999px;padding:8px 11px;background:rgba(3,7,18,.68);backdrop-filter:blur(14px);font-size:.76rem;color:#c9f7ff;display:none}
+      .insight-card{display:block;min-height:0;transition:background-color .12s ease,border-color .12s ease}
+      .insight-card:hover{transform:none;border-color:var(--border);background:var(--surface-subtle);box-shadow:none}
+      .galaxy-badge{position:absolute;right:16px;bottom:16px;z-index:6;border:1px solid var(--border);border-radius:var(--radius);padding:8px 11px;background:var(--surface-elevated);font-size:.76rem;color:var(--foreground);display:none}
       body.galaxy-active .galaxy-badge{display:block}
-      body.galaxy-active .graph-shell{box-shadow:0 0 0 1px rgba(110,231,255,.12),0 30px 120px rgba(0,122,255,.18)}
+      body.galaxy-active .graph-shell{box-shadow:none}
       @media(max-width:760px){#knowledgeNav,#tablesNav{display:none}.insight-cards{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);

@@ -171,32 +171,34 @@ font-family: Inter, ui-sans-serif, system-ui, -apple-system,
 - Keep line lengths readable
 - Use strong headings sparingly
 
-## 7. Colour system
+## 7. Colour and theme system
 
-The base interface is dark, neutral and restrained.
+Light and dark are equal product themes. Use the shared semantic tokens in
+`ui-system.css`; route-specific styles must not introduce raw theme colours.
+Applications expose System, Light and Dark choices, persist the selection and
+resolve System from the operating-system preference before first paint.
 
 ```css
 :root {
-  color-scheme: dark;
-
-  --bg: #0b0d10;
-  --surface-1: #101318;
-  --surface-2: #151920;
-  --surface-3: #1b2028;
-
-  --text: #f2f4f7;
-  --text-muted: #9da6b2;
-  --text-faint: #717b88;
-
-  --line: #2a3039;
-  --line-strong: #3a424e;
-
-  --accent: #55c2d9;
-  --accent-soft: rgba(85, 194, 217, 0.12);
-
-  --success: #49b981;
-  --warning: #d5a34b;
-  --danger: #d96875;
+  --background: /* page */;
+  --foreground: /* primary text */;
+  --card: /* grouped surface */;
+  --card-foreground: /* text on grouped surface */;
+  --primary: /* functional accent */;
+  --primary-foreground: /* text on accent */;
+  --secondary: /* secondary control surface */;
+  --muted: /* muted surface */;
+  --muted-foreground: /* supporting text */;
+  --accent: /* selected or hover surface */;
+  --border: /* standard separator */;
+  --input: /* input border */;
+  --ring: /* focus indicator */;
+  --surface: /* application surface */;
+  --surface-subtle: /* low-emphasis grouping */;
+  --surface-elevated: /* overlays only */;
+  --success: /* positive status */;
+  --warning: /* warning status */;
+  --info: /* informational status */;
 }
 ```
 
@@ -204,6 +206,7 @@ The base interface is dark, neutral and restrained.
 
 - Use one primary interface accent
 - Use semantic colours only for meaning
+- Never use a theme-specific colour in a route or component
 - Graph node categories may use additional colours, but they should not spread into general UI decoration
 - Maintain sufficient contrast for body text and controls
 - Avoid pure black as the only background
