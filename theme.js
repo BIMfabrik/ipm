@@ -21,6 +21,25 @@
 
   apply(choice, false);
 
+  function installNavigation() {
+    if (!location.pathname.includes("/knowledge/")) return;
+    const nav = document.querySelector(".navlinks");
+    if (!nav) return;
+    const depth = location.pathname.replace(/\/$/, "").split("/").length;
+    const root = depth > 3 ? "../../" : "../";
+    const knowledge = depth > 3 ? "../" : "./";
+    nav.setAttribute("aria-label", "Primary navigation");
+    nav.innerHTML = [
+      [root, "Home"],
+      [`${root}#graph`, "Model"],
+      [`${root}#approach`, "Method"],
+      [knowledge, "Knowledge", true],
+      [`${root}tables/`, "Tables"]
+    ].map(([href, label, current]) =>
+      `<a class="pill" href="${href}"${current ? ' aria-current="page"' : ""}>${label}</a>`
+    ).join("");
+  }
+
   function installToggle() {
     if (document.getElementById("themeToggle") || document.querySelector(".ui-theme-toggle")) return;
     const nav = document.querySelector(".nav");
@@ -48,7 +67,12 @@
     apply(choice, false);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installToggle);
-  else installToggle();
+  function installUi() {
+    installNavigation();
+    installToggle();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installUi);
+  else installUi();
   media.addEventListener("change", () => { if (choice === "system") apply("system", false); });
 })();
