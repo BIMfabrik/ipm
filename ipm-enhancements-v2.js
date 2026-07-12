@@ -83,12 +83,17 @@
 
     const style = document.createElement('style');
     style.textContent = `
-      .insight-card{display:block;min-height:0;transition:background-color .12s ease,border-color .12s ease}
-      .insight-card:hover{transform:none;border-color:var(--border);background:var(--surface-subtle);box-shadow:none}
+      .insight-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+      .insight-card{display:grid;min-width:0;min-height:128px;grid-template-rows:auto 1fr auto;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px;transition:background-color .12s ease,border-color .12s ease}
+      .insight-card .num{color:var(--muted-foreground);font-size:12px;font-weight:600;letter-spacing:.06em}
+      .insight-card h3{margin:0;font-size:16px;line-height:1.3;overflow-wrap:anywhere}
+      .insight-card p{margin:0;color:var(--muted-foreground);font-size:13px}
+      .insight-card:hover{transform:none;border-color:var(--ring);background:var(--surface-subtle);box-shadow:none}
+      .insight-card:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
       .galaxy-badge{position:absolute;right:16px;bottom:16px;z-index:6;border:1px solid var(--border);border-radius:var(--radius);padding:8px 11px;background:var(--surface-elevated);font-size:.76rem;color:var(--foreground);display:none}
       body.galaxy-active .galaxy-badge{display:block}
       body.galaxy-active .graph-shell{box-shadow:none}
-      @media(max-width:760px){#knowledgeNav,#tablesNav{display:none}.insight-cards{grid-template-columns:1fr}}
+      @media(max-width:760px){#knowledgeNav,#tablesNav{display:none}.insight-cards{grid-template-columns:1fr;gap:8px}.insight-card{min-height:0;padding:14px}}
     `;
     document.head.appendChild(style);
 
