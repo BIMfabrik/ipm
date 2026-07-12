@@ -1,48 +1,1294 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Interactive BIM information-process model connecting use cases, processes, roles, data requirements, tools and FM handover." />
-<title>IPM — Information Process Management</title>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.0/dist/3d-force-graph.min.js"></script>
-<style>
-:root{color-scheme:dark;--bg:#0b0d10;--surface:#101318;--surface-2:#151920;--surface-3:#1b2028;--text:#f2f4f7;--muted:#9da6b2;--faint:#717b88;--line:#2a3039;--line-strong:#3a424e;--accent:#55c2d9;--accent-soft:rgba(85,194,217,.12);--radius-control:4px;--radius-panel:6px}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden}a{color:inherit;text-decoration:none}button,select,input{font:inherit}button,a,select,input{outline-offset:2px}:focus-visible{outline:2px solid var(--accent)}.shell{width:min(1440px,calc(100% - 40px));margin:auto}.nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;min-height:56px;border-bottom:1px solid var(--line);background:rgba(11,13,16,.94);backdrop-filter:blur(10px)}.brand{display:flex;align-items:center;gap:10px;font-size:.94rem;font-weight:650}.brand-mark{width:17px;height:17px;border:2px solid var(--accent);border-radius:2px;position:relative}.brand-mark:after{content:"";position:absolute;right:-5px;bottom:-5px;width:7px;height:7px;background:var(--accent)}.nav-actions{display:flex;gap:8px;align-items:center}.control,.nav select,.cta,.graph-toolbar button,.graph-toolbar select,.graph-toolbar input{min-height:36px;border:1px solid var(--line);border-radius:var(--radius-control);background:var(--surface);color:var(--text);padding:8px 11px}.cta{display:inline-flex;align-items:center;font-weight:650;cursor:pointer}.cta.primary{background:var(--text);color:#111;border-color:var(--text)}.intro{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end;padding:38px 0 30px;border-bottom:1px solid var(--line)}.intro-copy{grid-column:1 / span 8}.eyebrow{display:block;color:var(--accent);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}.intro h1{font-size:clamp(2.25rem,4vw,3.35rem);line-height:1.04;letter-spacing:-.04em;margin:0 0 14px;max-width:820px}.intro p{font-size:1rem;line-height:1.6;color:var(--muted);max-width:760px;margin:0}.hero-actions{display:flex;gap:10px;margin-top:20px}.model-status{grid-column:9 / -1;border-left:1px solid var(--line);padding:4px 0 4px 24px}.model-status strong{display:block;font-size:1.03rem;margin-bottom:6px}.model-status p{font-size:.9rem;line-height:1.5;margin:0;color:var(--text)}.model-status small{display:block;margin-top:8px;color:var(--faint);font-size:.78rem}.section{padding:44px 0;border-bottom:1px solid var(--line)}.graph-section{padding:30px 0 48px}.section-head{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end;margin-bottom:22px}.section-head>div{grid-column:1 / span 7}.section-head>p{grid-column:8 / -1;color:var(--muted);line-height:1.55;margin:0}.section h2{font-size:clamp(1.8rem,2.6vw,2.35rem);line-height:1.1;letter-spacing:-.03em;margin:0}.graph-shell{border:1px solid var(--line);border-radius:var(--radius-panel);overflow:hidden;background:#090c10}.workspace-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;padding:16px;border-bottom:1px solid var(--line);background:var(--surface)}.workspace-head h3{font-size:1rem;margin:0 0 4px}.workspace-head p{font-size:.82rem;color:var(--muted);margin:0}.workspace-meta{font-size:.8rem;color:var(--muted);white-space:nowrap}.scenario-tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);background:var(--surface);scrollbar-width:thin}.scenario{flex:1 0 170px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);padding:10px 14px;text-align:left;cursor:pointer;white-space:nowrap}.scenario:last-child{border-right:0}.scenario strong{display:block;color:inherit;font-size:.86rem;font-weight:600}.scenario span{display:block;font-size:.72rem;margin-top:3px;color:var(--faint)}.scenario[aria-selected=true]{background:var(--surface-2);box-shadow:inset 0 -2px 0 var(--accent);color:var(--text)}.graph-toolbar{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);flex-wrap:wrap}.graph-toolbar .left,.graph-toolbar .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.graph-toolbar button,.graph-toolbar select,.graph-toolbar input{min-height:34px;background:#0e1217;padding:7px 10px}.graph-toolbar input{min-width:240px}.graph-toolbar label{font-size:.75rem;color:var(--faint)}.workspace-body{display:grid;grid-template-columns:minmax(0,1fr);min-width:0}.workspace-body.has-detail{grid-template-columns:minmax(0,1fr) 340px}.graph-wrap{position:relative;min-width:0}.graph-note{position:absolute;left:12px;bottom:12px;z-index:4;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}.chip{border:1px solid var(--line);border-radius:3px;background:rgba(14,18,23,.9);padding:5px 7px;color:var(--muted);font-size:.72rem}.node-card{display:none;min-width:0;border-left:1px solid var(--line);background:var(--surface);padding:16px;overflow:auto}.node-card.visible{display:block}.node-card header{display:flex;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}.node-card h3{font-size:1rem;margin:0}.node-card p{color:var(--muted);margin:.25rem 0 0;font-size:.8rem}.node-card .close{width:32px;height:32px;min-height:32px;padding:0;border:1px solid var(--line);border-radius:var(--radius-control);background:var(--surface-2);color:var(--text);cursor:pointer}.node-card dl{display:grid;grid-template-columns:100px minmax(0,1fr);gap:0;margin:12px 0 0;font-size:.8rem}.node-card dt,.node-card dd{padding:8px 0;border-bottom:1px solid var(--line)}.node-card dt{color:var(--muted);padding-right:10px}.node-card dd{margin:0;overflow-wrap:anywhere}#graph3d{height:680px}.process-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);margin-top:26px}.process-step{position:relative;padding:18px 24px 0 0}.process-step:not(:last-child):after{content:"→";position:absolute;right:12px;top:20px;color:var(--faint)}.process-step .num{display:block;color:var(--accent);font-size:.7rem;font-weight:800;letter-spacing:.1em;margin-bottom:20px}.process-step h3{font-size:1rem;margin:0 30px 8px 0}.process-step p{font-size:.88rem;line-height:1.5;color:var(--muted);margin:0 26px 0 0}.about{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:start}.profile{grid-column:1 / span 4}.about-copy{grid-column:5 / -1}.profile h3{font-size:1.25rem;margin:0 0 6px}.profile p,.about-copy p{color:var(--muted);line-height:1.55;margin:.5rem 0}.about-copy h2{font-size:1.45rem}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.tag{border:1px solid var(--line);border-radius:3px;padding:5px 7px;color:#cbd5e1;font-size:.74rem}.footer{padding:22px 0 32px;color:var(--muted);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:.8rem}
-@media(max-width:980px){.intro-copy{grid-column:1 / span 7}.model-status{grid-column:8 / -1}.section-head>div{grid-column:1 / span 6}.section-head>p{grid-column:7 / -1}.workspace-body.has-detail{grid-template-columns:minmax(0,1fr) 300px}#graph3d{height:620px}.process-flow{grid-template-columns:repeat(2,1fr);row-gap:28px}.process-step:nth-child(2):after{display:none}.profile{grid-column:1 / span 5}.about-copy{grid-column:6 / -1}}
-@media(max-width:720px){.shell{width:min(100% - 24px,1440px)}.nav .brand span:last-child{display:none}.intro{grid-template-columns:1fr;padding:28px 0 22px}.intro-copy,.model-status{grid-column:auto}.intro h1{font-size:2.25rem}.model-status{border-left:0;border-top:1px solid var(--line);padding:16px 0 0}.section{padding:34px 0}.graph-section{padding:22px 0 34px}.section-head{grid-template-columns:1fr;gap:10px}.section-head>div,.section-head>p{grid-column:auto}.workspace-head{align-items:flex-start;flex-direction:column;gap:8px}.workspace-meta{white-space:normal}.scenario{flex-basis:175px}.graph-toolbar{align-items:stretch}.graph-toolbar .left,.graph-toolbar .right{width:100%}.graph-toolbar .right{display:grid;grid-template-columns:1fr auto}.graph-toolbar input{width:100%;min-width:0}.workspace-body,.workspace-body.has-detail{display:block;position:relative}.node-card{position:absolute;z-index:6;left:8px;right:8px;bottom:8px;max-height:48vh;border:1px solid var(--line);border-radius:var(--radius-panel);box-shadow:0 8px 24px rgba(0,0,0,.24)}#graph3d{height:68vh;min-height:500px}.graph-note{display:none}.process-flow{grid-template-columns:1fr;margin-top:20px}.process-step{padding:16px 0 18px;border-bottom:1px solid var(--line)}.process-step:not(:last-child):after{content:"↓";right:4px;top:20px}.process-step p,.process-step h3{margin-right:28px}.process-step .num{margin-bottom:10px}.about{grid-template-columns:1fr}.profile,.about-copy{grid-column:auto}.about-copy{padding-top:16px;border-top:1px solid var(--line)}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Interactive BIM information-process model connecting use cases, processes, roles, data requirements, tools and FM handover." />
+  <title>IPM — Information Process Management</title>
+  <script>
+    (() => {
+      const key = "ipm-theme-v1";
+      const choice = localStorage.getItem(key) || "system";
+      const resolved = choice === "system"
+        ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        : choice;
+      document.documentElement.dataset.themeChoice = choice;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.style.colorScheme = resolved;
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.0/dist/3d-force-graph.min.js"></script>
+  <style>
+    :root {
+      --radius: 0.5rem;
+      --background: oklch(0.985 0.002 247.8);
+      --foreground: oklch(0.205 0.012 255.7);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0.205 0.012 255.7);
+      --primary: oklch(0.47 0.13 253.2);
+      --primary-foreground: oklch(0.985 0.002 247.8);
+      --secondary: oklch(0.95 0.004 247.9);
+      --secondary-foreground: oklch(0.27 0.012 255.7);
+      --muted: oklch(0.95 0.004 247.9);
+      --muted-foreground: oklch(0.51 0.015 255.5);
+      --accent: oklch(0.93 0.02 252.9);
+      --accent-foreground: oklch(0.31 0.08 253.5);
+      --border: oklch(0.89 0.008 247.9);
+      --input: oklch(0.89 0.008 247.9);
+      --ring: oklch(0.56 0.12 253.1);
+      --surface: oklch(1 0 0);
+      --surface-subtle: oklch(0.965 0.003 247.9);
+      --surface-elevated: oklch(1 0 0);
+      --success: oklch(0.55 0.14 151.2);
+      --warning: oklch(0.7 0.15 74.5);
+      --info: oklch(0.57 0.12 244.8);
+      --graph-background: #f7f8fa;
+      --graph-label-background: rgba(255, 255, 255, 0.94);
+      --graph-label-border: rgba(31, 41, 55, 0.18);
+      --graph-label-text: #172033;
+      --graph-label-muted: rgba(23, 32, 51, 0.68);
+      --overlay-background: rgba(255, 255, 255, 0.92);
+      --shadow-overlay: 0 12px 32px rgba(15, 23, 42, 0.14);
+      color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+      --background: oklch(0.17 0.01 255.8);
+      --foreground: oklch(0.94 0.006 247.9);
+      --card: oklch(0.205 0.012 255.7);
+      --card-foreground: oklch(0.94 0.006 247.9);
+      --primary: oklch(0.7 0.12 252.4);
+      --primary-foreground: oklch(0.18 0.02 254.3);
+      --secondary: oklch(0.25 0.012 255.7);
+      --secondary-foreground: oklch(0.92 0.006 247.9);
+      --muted: oklch(0.25 0.012 255.7);
+      --muted-foreground: oklch(0.68 0.012 247.9);
+      --accent: oklch(0.28 0.035 253.2);
+      --accent-foreground: oklch(0.88 0.045 251.6);
+      --border: oklch(1 0 0 / 12%);
+      --input: oklch(1 0 0 / 16%);
+      --ring: oklch(0.66 0.11 252.7);
+      --surface: oklch(0.205 0.012 255.7);
+      --surface-subtle: oklch(0.19 0.01 255.8);
+      --surface-elevated: oklch(0.235 0.012 255.7);
+      --success: oklch(0.7 0.13 151.2);
+      --warning: oklch(0.79 0.14 78.4);
+      --info: oklch(0.72 0.1 244.8);
+      --graph-background: #10141b;
+      --graph-label-background: rgba(16, 20, 27, 0.94);
+      --graph-label-border: rgba(255, 255, 255, 0.16);
+      --graph-label-text: #f4f7fb;
+      --graph-label-muted: rgba(244, 247, 251, 0.64);
+      --overlay-background: rgba(24, 29, 38, 0.94);
+      --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.28);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    button, input, select { font: inherit; }
+    button, a, input, select { outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--ring); }
+    a { color: inherit; text-decoration: none; }
+    [hidden] { display: none !important; }
+
+    .app-shell { min-height: 100dvh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--border);
+      background: color-mix(in oklch, var(--background) 94%, transparent);
+      backdrop-filter: blur(10px);
+    }
+    .topbar-inner {
+      display: flex;
+      min-height: 56px;
+      width: min(96rem, calc(100% - 48px));
+      margin: 0 auto;
+      align-items: center;
+      gap: 18px;
+    }
+    .brand {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+    .brand-mark {
+      position: relative;
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+      border: 2px solid var(--primary);
+      border-radius: 2px;
+    }
+    .brand-mark::after {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      width: 7px;
+      height: 7px;
+      background: var(--primary);
+      content: "";
+    }
+    .brand-subtitle {
+      color: var(--muted-foreground);
+      font-weight: 500;
+    }
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+    }
+    .nav-link {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      border-radius: calc(var(--radius) - 2px);
+      padding: 0 10px;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .nav-link:hover { background: var(--surface-subtle); color: var(--foreground); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+    .theme-toggle {
+      display: inline-flex;
+      height: 36px;
+      align-items: center;
+      gap: 2px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-subtle);
+      padding: 2px;
+    }
+    .theme-option {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: calc(var(--radius) - 3px);
+      background: transparent;
+      color: var(--muted-foreground);
+      cursor: pointer;
+    }
+    .theme-option:hover { background: var(--background); color: var(--foreground); }
+    .theme-option[aria-pressed="true"] {
+      background: var(--background);
+      color: var(--foreground);
+      box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 12%, transparent);
+    }
+    .theme-option svg { width: 15px; height: 15px; stroke-width: 1.8; }
+
+    .select-control,
+    .button,
+    .graph-toolbar button,
+    .graph-toolbar select,
+    .graph-toolbar input {
+      min-height: 36px;
+      border: 1px solid var(--input);
+      border-radius: calc(var(--radius) - 2px);
+      background: var(--surface);
+      color: var(--foreground);
+      padding: 7px 10px;
+    }
+    .select-control { min-width: 62px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .button:hover,
+    .graph-toolbar button:hover { background: var(--surface-subtle); }
+    .button.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+    .button.primary:hover { background: color-mix(in oklch, var(--primary) 90%, black); }
+
+    main {
+      width: min(96rem, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+    .page-header-copy { min-width: 0; max-width: 780px; }
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .page-title {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(24px, 3vw, 30px);
+      font-weight: 650;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      text-wrap: balance;
+    }
+    .page-description {
+      max-width: 680px;
+      margin: 8px 0 0;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .page-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin-top: 12px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+    }
+    .page-header-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; gap: 8px; }
+
+    .section { border-bottom: 1px solid var(--border); padding: 36px 0; }
+    .graph-section { padding-top: 24px; }
+    .section-header {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+    .section-header-copy { grid-column: 1 / span 7; }
+    .section-header-description {
+      grid-column: 8 / -1;
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .section-title {
+      margin: 0;
+      font-size: clamp(22px, 2.5vw, 28px);
+      font-weight: 650;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+
+    .workspace {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .workspace-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+    }
+    .workspace-header h3 { margin: 0 0 3px; font-size: 14px; font-weight: 650; }
+    .workspace-header p { margin: 0; color: var(--muted-foreground); font-size: 12px; }
+    .workspace-meta { color: var(--muted-foreground); font-size: 12px; white-space: nowrap; }
+
+    .scenario-tabs {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-subtle);
+      scrollbar-width: thin;
+    }
+    .scenario {
+      flex: 1 0 180px;
+      border: 0;
+      border-right: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted-foreground);
+      padding: 10px 14px;
+      text-align: left;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .scenario:last-child { border-right: 0; }
+    .scenario strong { display: block; color: inherit; font-size: 13px; font-weight: 600; }
+    .scenario span { display: block; margin-top: 2px; color: var(--muted-foreground); font-size: 11px; }
+    .scenario:hover { background: var(--background); color: var(--foreground); }
+    .scenario[aria-selected="true"] {
+      background: var(--background);
+      color: var(--foreground);
+      box-shadow: inset 0 -2px 0 var(--primary);
+    }
+
+    .graph-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-subtle);
+      padding: 9px 12px;
+    }
+    .toolbar-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .graph-toolbar label { color: var(--muted-foreground); font-size: 12px; }
+    .graph-toolbar button,
+    .graph-toolbar select,
+    .graph-toolbar input { min-height: 34px; background: var(--surface); font-size: 13px; }
+    .graph-toolbar input { min-width: 250px; }
+
+    .workspace-body { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+    .workspace-body.has-detail { grid-template-columns: minmax(0, 1fr) 340px; }
+    .graph-wrap { position: relative; min-width: 0; background: var(--graph-background); }
+    #graph3d { height: 680px; }
+    .graph-state {
+      position: absolute;
+      inset: 0;
+      z-index: 7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: color-mix(in oklch, var(--graph-background) 82%, transparent);
+    }
+    .state-panel {
+      max-width: 360px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--overlay-background);
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-overlay);
+    }
+    .state-panel strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .state-panel span { display: block; color: var(--muted-foreground); font-size: 12px; line-height: 1.55; }
+    .state-panel .button { margin-top: 12px; }
+
+    .graph-legend {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      z-index: 4;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      pointer-events: none;
+    }
+    .legend-item {
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 3px);
+      background: var(--overlay-background);
+      color: var(--muted-foreground);
+      padding: 4px 7px;
+      font-size: 11px;
+    }
+
+    .node-panel {
+      display: none;
+      min-width: 0;
+      overflow: auto;
+      border-left: 1px solid var(--border);
+      background: var(--surface);
+      padding: 16px;
+    }
+    .node-panel.visible { display: block; }
+    .node-panel header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .node-panel h3 { margin: 0; font-size: 14px; font-weight: 650; }
+    .node-panel p { margin: 3px 0 0; color: var(--muted-foreground); font-size: 12px; }
+    .close-button {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 2px);
+      background: var(--surface-subtle);
+      color: var(--foreground);
+      cursor: pointer;
+    }
+    .node-panel dl { display: grid; grid-template-columns: 104px minmax(0, 1fr); margin: 12px 0 0; font-size: 12px; }
+    .node-panel dt,
+    .node-panel dd { border-bottom: 1px solid var(--border); padding: 8px 0; }
+    .node-panel dt { color: var(--muted-foreground); padding-right: 10px; }
+    .node-panel dd { margin: 0; overflow-wrap: anywhere; }
+
+    .source-note {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 18px;
+      border-top: 1px solid var(--border);
+      padding: 11px 14px;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .source-note strong { color: var(--foreground); font-weight: 600; }
+    .source-status { color: var(--success); font-weight: 600; }
+
+    .process-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--border);
+      margin-top: 22px;
+    }
+    .process-step { position: relative; padding: 17px 28px 0 0; }
+    .process-step:not(:last-child)::after {
+      position: absolute;
+      top: 18px;
+      right: 12px;
+      color: var(--muted-foreground);
+      content: "→";
+    }
+    .process-step .number {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+    .process-step h3 { margin: 0 28px 7px 0; font-size: 14px; font-weight: 650; }
+    .process-step p { margin: 0 24px 0 0; color: var(--muted-foreground); font-size: 13px; line-height: 1.55; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 24px;
+    }
+    .profile { grid-column: 1 / span 4; }
+    .about-copy { grid-column: 5 / -1; }
+    .profile h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
+    .profile p,
+    .about-copy p { margin: 7px 0; color: var(--muted-foreground); font-size: 13px; line-height: 1.6; }
+    .about-copy h2 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -0.02em; }
+    .focus-line { margin-top: 12px !important; color: var(--foreground) !important; font-size: 12px !important; }
+
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px 20px;
+      padding: 20px 0 0;
+      color: var(--muted-foreground);
+      font-size: 11px;
+    }
+
+    @media (max-width: 980px) {
+      .section-header-copy { grid-column: 1 / span 6; }
+      .section-header-description { grid-column: 7 / -1; }
+      .workspace-body.has-detail { grid-template-columns: minmax(0, 1fr) 300px; }
+      #graph3d { height: 620px; }
+      .process-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+      .process-step:nth-child(2)::after { display: none; }
+      .profile { grid-column: 1 / span 5; }
+      .about-copy { grid-column: 6 / -1; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner,
+      main { width: min(100% - 28px, 96rem); }
+      .brand-subtitle,
+      .primary-nav { display: none; }
+      .topbar-inner { gap: 10px; }
+      .topbar-actions { margin-left: auto; }
+      .theme-option { width: 28px; }
+      main { padding-top: 20px; }
+      .page-header { flex-direction: column; gap: 16px; }
+      .page-header-actions { width: 100%; }
+      .page-header-actions .button { width: 100%; }
+      .section { padding: 30px 0; }
+      .graph-section { padding-top: 20px; }
+      .section-header { grid-template-columns: 1fr; gap: 8px; }
+      .section-header-copy,
+      .section-header-description { grid-column: auto; }
+      .workspace-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .workspace-meta { white-space: normal; }
+      .scenario { flex-basis: 180px; }
+      .graph-toolbar { align-items: stretch; flex-direction: column; }
+      .toolbar-group { width: 100%; }
+      .toolbar-group.search { display: grid; grid-template-columns: 1fr auto; }
+      .graph-toolbar input { min-width: 0; width: 100%; }
+      .workspace-body,
+      .workspace-body.has-detail { display: block; position: relative; }
+      .node-panel {
+        position: absolute;
+        z-index: 8;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        max-height: 48vh;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-overlay);
+      }
+      #graph3d { height: 68vh; min-height: 500px; }
+      .graph-legend { display: none; }
+      .source-note { align-items: flex-start; flex-direction: column; gap: 3px; }
+      .process-flow { grid-template-columns: 1fr; margin-top: 18px; }
+      .process-step { border-bottom: 1px solid var(--border); padding: 15px 0 17px; }
+      .process-step:not(:last-child)::after { top: 17px; right: 4px; content: "↓"; }
+      .process-step .number { margin-bottom: 8px; }
+      .process-step h3,
+      .process-step p { margin-right: 28px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .profile,
+      .about-copy { grid-column: auto; }
+      .about-copy { border-top: 1px solid var(--border); padding-top: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="shell">
-<nav class="nav"><a class="brand" href="#top"><span class="brand-mark"></span><span>IPM</span><span style="color:var(--muted);font-weight:500">Information Process Management</span></a><div class="nav-actions"><select id="languageMode" aria-label="Language"><option value="en">EN</option><option value="de">DE</option></select><a class="control" href="#graph" id="navGraph">Model</a></div></nav>
-<section class="intro" id="top"><div class="intro-copy"><span class="eyebrow" id="heroEyebrow">BIM · Information management · FM</span><h1 id="heroTitle">Information requirements, connected to delivery.</h1><p id="heroLead">IPM links use cases, processes, information requirements, roles, tools and FM outputs in one navigable model.</p><div class="hero-actions"><a class="cta primary" href="#graph" id="exploreCta">Open information model</a></div></div><aside class="model-status"><strong id="modelLabel">Current model</strong><p id="modelSummary">Loading model data…</p><small id="modelUpdated"></small></aside></section>
-<section class="section graph-section" id="graph"><div class="section-head"><div><span class="eyebrow" id="graphEyebrow">Interactive workspace</span><h2 id="graphTitle">Explore the information model.</h2></div><p id="graphLead">Select a scenario, inspect relationships and open a node to review its structured source information.</p></div><div class="graph-shell"><div class="workspace-head"><div><h3 id="workspaceTitle">Information model</h3><p id="workspaceDescription">Use cases, delivery processes, information and operational outputs</p></div><span class="workspace-meta" id="workspaceMeta"></span></div><div class="scenario-tabs" role="tablist" aria-label="Scenarios"><button class="scenario" data-scenario="owner" aria-selected="true" role="tab"><strong id="s1t">Owner requirements</strong><span id="s1p">Use cases → information order</span></button><button class="scenario" data-scenario="roles" aria-selected="false" role="tab"><strong id="s2t">Roles & skills</strong><span id="s2p">Processes → responsibility</span></button><button class="scenario" data-scenario="ids" aria-selected="false" role="tab"><strong id="s3t">IDS & checking</strong><span id="s3p">Requirements → validation</span></button><button class="scenario" data-scenario="fm" aria-selected="false" role="tab"><strong id="s4t">BIM2FM</strong><span id="s4p">Assets → operational output</span></button></div><div class="graph-toolbar"><div class="left"><label for="graphMode" id="viewLabel">View</label><select id="graphMode"><option id="modeCluster" value="cluster">Story clusters</option><option id="modeOrbit" value="orbit">3D orbit</option></select><button id="fitGraph">Fit</button><button id="resetFilter">Reset</button></div><div class="right"><input id="graphSearch" type="search" placeholder="Filter graph nodes…" aria-label="Filter graph nodes"/><span id="graphMeta" class="workspace-meta"></span></div></div><div class="workspace-body" id="workspaceBody"><div class="graph-wrap"><div id="graph3d"></div><div class="graph-note" id="hud"></div></div><aside id="nodeCard" class="node-card" aria-live="polite"></aside></div></div></section>
-<section class="section" id="approach"><div class="section-head"><div><span class="eyebrow" id="problemEyebrow">Method</span><h2 id="problemTitle">From purpose to operational use.</h2></div><p id="problemLead">IPM structures BIM requirements as a traceable information flow rather than a collection of disconnected documents.</p></div><div class="process-flow"><article class="process-step"><span class="num">01</span><h3 id="c1t">Purpose</h3><p id="c1p">Start with the owner and operator decisions the information must support.</p></article><article class="process-step"><span class="num">02</span><h3 id="c2t">Information order</h3><p id="c2p">Derive processes, responsibilities, data needs and delivery packages.</p></article><article class="process-step"><span class="num">03</span><h3 id="c3t">Validation</h3><p id="c3p">Translate requirements into structured checks, IDS rules and evidence.</p></article><article class="process-step"><span class="num">04</span><h3 id="c4t">Operational use</h3><p id="c4p">Connect verified information to asset management, CAFM and lifecycle decisions.</p></article></div></section>
-<section class="section"><div class="about"><div class="profile"><span class="eyebrow" id="aboutEyebrow">About</span><h3>Jindrich Hozak</h3><p id="profileText">Architect and BIM / information-management specialist working across digital building, lifecycle data, BIM2FM, model quality and process transformation.</p><div class="tags"><span class="tag">BIM2FM</span><span class="tag">IFC / IDS</span><span class="tag">Digital Twin</span><span class="tag">Solibri</span><span class="tag">dRofus</span><span class="tag">Data Strategy</span></div></div><div class="about-copy"><h2 id="aboutTitle">A connected information-management prototype.</h2><p id="aboutText">The model demonstrates how operational purpose, processes, responsibilities, requirements and validation can be connected in a form that decision-makers can inspect.</p><p id="aboutText2">The next steps include explicit KBOB and FM process mappings, role and skill-gap analysis, and scenario-based generation of information requirements.</p></div></div></section>
-<footer class="footer"><span>IPM prototype · BIMfabrik GitHub Pages</span><span id="footerText">Connected BIM information management.</span></footer>
-</div>
-<script>
-const DATA_URL='./data/ipm.json',LANG_KEY='ipm-language-v1',MODE_KEY='ipm-graph-mode-v1';
-const colors={usecase:'#1f9cff',process:'#a47cff',product:'#50e3a4',assetType:'#35d9d2',input:'#ffb45c',output:'#ffd36b',actor:'#ff6b7a',evidence:'#9ba6bb',cluster:'#55c2d8'},relationColors={process:'#b993ff',tool:'#50e3a4',input:'#ffb45c',output:'#ffd36b',supports:'#35d9d2',requires:'#1f9cff',owner:'#ff6b7a',evidence:'#aab3c5'};
-const copy={en:{navGraph:'Model',heroEyebrow:'BIM · Information management · FM',heroTitle:'Information requirements, connected to delivery.',heroLead:'IPM links use cases, processes, information requirements, roles, tools and FM outputs in one navigable model.',exploreCta:'Open information model',modelLabel:'Current model',graphEyebrow:'Interactive workspace',graphTitle:'Explore the information model.',graphLead:'Select a scenario, inspect relationships and open a node to review its structured source information.',workspaceTitle:'Information model',workspaceDescription:'Use cases, delivery processes, information and operational outputs',viewLabel:'View',modeCluster:'Story clusters',modeOrbit:'3D orbit',fitGraph:'Fit',resetFilter:'Reset',s1t:'Owner requirements',s1p:'Use cases → information order',s2t:'Roles & skills',s2p:'Processes → responsibility',s3t:'IDS & checking',s3p:'Requirements → validation',s4t:'BIM2FM',s4p:'Assets → operational output',problemEyebrow:'Method',problemTitle:'From purpose to operational use.',problemLead:'IPM structures BIM requirements as a traceable information flow rather than a collection of disconnected documents.',c1t:'Purpose',c1p:'Start with the owner and operator decisions the information must support.',c2t:'Information order',c2p:'Derive processes, responsibilities, data needs and delivery packages.',c3t:'Validation',c3p:'Translate requirements into structured checks, IDS rules and evidence.',c4t:'Operational use',c4p:'Connect verified information to asset management, CAFM and lifecycle decisions.',aboutEyebrow:'About',profileText:'Architect and BIM / information-management specialist working across digital building, lifecycle data, BIM2FM, model quality and process transformation.',aboutTitle:'A connected information-management prototype.',aboutText:'The model demonstrates how operational purpose, processes, responsibilities, requirements and validation can be connected in a form that decision-makers can inspect.',aboutText2:'The next steps include explicit KBOB and FM process mappings, role and skill-gap analysis, and scenario-based generation of information requirements.',footerText:'Connected BIM information management.'},de:{navGraph:'Modell',heroEyebrow:'BIM · Informationsmanagement · FM',heroTitle:'Informationsanforderungen mit der Lieferung verbinden.',heroLead:'IPM verbindet Anwendungsfälle, Prozesse, Informationsanforderungen, Rollen, Werkzeuge und FM-Outputs in einem navigierbaren Modell.',exploreCta:'Informationsmodell öffnen',modelLabel:'Aktuelles Modell',graphEyebrow:'Interaktiver Arbeitsbereich',graphTitle:'Informationsmodell erkunden.',graphLead:'Szenario wählen, Beziehungen untersuchen und einen Knoten öffnen, um strukturierte Quelldaten zu prüfen.',workspaceTitle:'Informationsmodell',workspaceDescription:'Anwendungsfälle, Lieferprozesse, Informationen und betriebliche Outputs',viewLabel:'Ansicht',modeCluster:'Themencluster',modeOrbit:'3D-Orbit',fitGraph:'Einpassen',resetFilter:'Zurücksetzen',s1t:'Bauherrenanforderungen',s1p:'Anwendungsfälle → Informationsbestellung',s2t:'Rollen & Skills',s2p:'Prozesse → Verantwortung',s3t:'IDS & Prüfung',s3p:'Anforderungen → Validierung',s4t:'BIM2FM',s4p:'Anlagen → Betriebsoutput',problemEyebrow:'Methode',problemTitle:'Vom Zweck zur betrieblichen Nutzung.',problemLead:'IPM strukturiert BIM-Anforderungen als nachvollziehbaren Informationsfluss statt als Sammlung getrennter Dokumente.',c1t:'Zweck',c1p:'Mit den Entscheidungen beginnen, welche die Informationen für Bauherrschaft und Betrieb unterstützen müssen.',c2t:'Informationsbestellung',c2p:'Prozesse, Verantwortlichkeiten, Datenbedarf und Lieferpakete daraus ableiten.',c3t:'Validierung',c3p:'Anforderungen in strukturierte Prüfungen, IDS-Regeln und Nachweise übersetzen.',c4t:'Betriebliche Nutzung',c4p:'Geprüfte Informationen mit Asset Management, CAFM und Lebenszyklusentscheiden verbinden.',aboutEyebrow:'Über das Projekt',profileText:'Architekt und BIM-/Informationsmanagement-Spezialist mit Fokus auf Digital Building, Lebenszyklusdaten, BIM2FM, Modellqualität und Prozesstransformation.',aboutTitle:'Ein verbundener Informationsmanagement-Prototyp.',aboutText:'Das Modell zeigt, wie betrieblicher Zweck, Prozesse, Verantwortlichkeiten, Anforderungen und Validierung für Entscheidungsträger nachvollziehbar verbunden werden können.',aboutText2:'Die nächsten Schritte umfassen explizite KBOB- und FM-Prozess-Mappings, Rollen- und Skill-Gap-Analysen sowie die szenariobasierte Generierung von Informationsanforderungen.',footerText:'Verbundenes BIM-Informationsmanagement.'}};
-let data={tables:{}},tables={},lang=localStorage.getItem(LANG_KEY)||'en',mode=localStorage.getItem(MODE_KEY)||'cluster',graph,lastGraph={nodes:[],links:[],rows:new Map()},selected=null,scenario='owner';
-const $=id=>document.getElementById(id),V=v=>v&&typeof v==='object'&&!Array.isArray(v)?(v[lang]??v.en??v.de??Object.values(v)[0]??''):v??'',E=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-function applyCopy(){document.documentElement.lang=lang;Object.entries(copy[lang]).forEach(([k,v])=>{const el=$(k);if(el)el.innerHTML=v});$('languageMode').value=lang;$('graphMode').value=mode;$('graphSearch').placeholder=lang==='de'?'Graph-Knoten filtern…':'Filter graph nodes…';$('graphSearch').setAttribute('aria-label',$('graphSearch').placeholder);updateModelSummary();renderGraph()}
-const clusterPositions=[[-270,150,-70],[0,170,30],[270,150,-70],[-260,-100,60],[0,-120,-55],[260,-100,60],[-160,-330,-10],[160,-330,45],[0,360,0],[360,0,-30]];
-function graphData(scope=scenario,includeSearch=true){const nodes=new Map(),links=[],rows=new Map(),members=new Map(),clusters=[];const add=(label,type,row,cluster)=>{label=V(label);if(!label)return null;const id=`${type}:${label}`;if(!nodes.has(id))nodes.set(id,{id,label,type,color:colors[type]||'#8e8e93',val:{usecase:10,process:7,product:6,input:4,output:4,actor:4,evidence:3,assetType:5}[type]||4,cluster:cluster?.key});if(cluster){if(!members.has(cluster.key))members.set(cluster.key,new Set());members.get(cluster.key).add(id)}if(row)rows.set(id,row);return id};const link=(a,b,label,hidden=false)=>{if(!a||!b)return;const active=selected&&(a===selected||b===selected),muted=selected&&!active;links.push({source:a,target:b,label,hidden,color:hidden?'transparent':muted?'rgba(120,130,150,.16)':relationColors[label]||'rgba(210,220,240,.8)',width:hidden?0:active?5:muted?1:3,particles:hidden?0:active?10:4})};(tables.usecases?.rows||[]).forEach((r,i)=>{const cl={key:`cluster:${i}`,label:V(r.name),x:clusterPositions[i%clusterPositions.length][0],y:clusterPositions[i%clusterPositions.length][1],z:clusterPositions[i%clusterPositions.length][2]};clusters.push(cl);const uc=add(r.name,'usecase',r,cl),pc=add(r.process,'process',null,cl),pr=add(r.product,'product',null,cl),inp=add(r.input,'input',null,cl),out=add(r.output,'output',null,cl);link(uc,pc,'process');link(uc,pr,'tool');link(inp,uc,'input');link(uc,out,'output')});(tables.processes?.rows||[]).forEach(r=>{const pc=add(r.name,'process',r),own=add(r.owner,'actor'),ev=add(r.evidence,'evidence');link(pc,own,'owner');link(pc,ev,'evidence')});(tables.products?.rows||[]).forEach(r=>rows.set(`product:${V(r.name)}`,r));(tables.inputsOutputs?.rows||[]).forEach(r=>rows.set(`${String(V(r.kind)).toLowerCase()==='output'?'output':'input'}:${V(r.name)}`,r));(tables.actors?.rows||[]).forEach(r=>rows.set(`actor:${V(r.name)}`,r));if(mode==='cluster'){clusters.forEach(cl=>{nodes.set(cl.key,{id:cl.key,label:cl.label,type:'cluster',val:1,color:colors.cluster,fx:cl.x,fy:cl.y,fz:cl.z,memberCount:(members.get(cl.key)||new Set()).size});(members.get(cl.key)||[]).forEach(id=>link(cl.key,id,'cluster',true))})}let ns=[...nodes.values()],ls=links;const allowedByScope={owner:new Set(['usecase','process','input','output','product']),roles:new Set(['usecase','process','actor']),ids:new Set(['usecase','process','input','output','evidence']),fm:new Set(['usecase','process','input','output','product']),all:new Set(['usecase','process','product','assetType','input','output','actor','evidence'])};const allowed=allowedByScope[scope]||allowedByScope.owner;ns=ns.filter(n=>n.type==='cluster'||allowed.has(n.type));const ids=new Set(ns.map(n=>n.id));ls=ls.filter(l=>ids.has(typeof l.source==='object'?l.source.id:l.source)&&ids.has(typeof l.target==='object'?l.target.id:l.target));const q=includeSearch?$('graphSearch').value.trim().toLowerCase():'';if(q){const keep=new Set(ns.filter(n=>n.label.toLowerCase().includes(q)||n.type.includes(q)).map(n=>n.id));ls=ls.filter(l=>keep.has(typeof l.source==='object'?l.source.id:l.source)||keep.has(typeof l.target==='object'?l.target.id:l.target));ls.forEach(l=>{keep.add(typeof l.source==='object'?l.source.id:l.source);keep.add(typeof l.target==='object'?l.target.id:l.target)});ns=ns.filter(n=>keep.has(n.id))}return{nodes:ns,links:ls,rows}}
-function makeLabel(label,type){const c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=512;c.height=128;ctx.font='700 36px Inter,system-ui';const text=label.length>25?label.slice(0,24)+'…':label,w=Math.min(ctx.measureText(text).width+38,480),x=(512-w)/2;ctx.fillStyle='rgba(12,15,20,.9)';ctx.beginPath();ctx.roundRect(x,28,w,72,8);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.stroke();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(text,256,63);ctx.font='500 16px Inter,system-ui';ctx.fillStyle='rgba(255,255,255,.62)';ctx.fillText(type,256,86);const tex=new THREE.CanvasTexture(c),sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));sp.scale.set(56,14,1);return sp}
-function nodeObject(n){if(n.type==='cluster'){const g=new THREE.Group(),size=90+Math.min(70,(n.memberCount||4)*11),geo=new THREE.SphereGeometry(size,48,28);g.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x55c2d8,transparent:true,opacity:.025,depthWrite:false})));g.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x55c2d8,transparent:true,opacity:.09,wireframe:true,depthWrite:false})));const l=makeLabel(n.label,'story cluster');l.position.set(0,size+18,0);l.scale.set(88,22,1);g.add(l);return g}const g=new THREE.Group(),s=new THREE.Mesh(new THREE.SphereGeometry(n.val,28,28),new THREE.MeshLambertMaterial({color:n.color,emissive:n.color,emissiveIntensity:.2}));g.add(s);const l=makeLabel(n.label,n.type);l.position.set(0,n.val+9,0);g.add(l);return g}
-function resizeGraph(){if(!graph)return;const el=$('graph3d');graph.width(el.clientWidth);graph.height(el.clientHeight)}
-function initGraph(){const el=$('graph3d');graph=ForceGraph3D({controlType:'orbit'})(el).backgroundColor('rgba(0,0,0,0)').nodeId('id').nodeThreeObject(nodeObject).nodeLabel(n=>n.type==='cluster'?n.label:`${n.label} · ${n.type}`).linkLabel(l=>l.hidden?'':l.label).linkColor(l=>l.color).linkWidth(l=>l.width).linkOpacity(.78).linkDirectionalParticles(l=>l.particles).linkDirectionalParticleWidth(2).linkDirectionalParticleSpeed(.01).linkDirectionalArrowLength(l=>l.hidden?0:5).onNodeClick(n=>{if(n.type==='cluster'){focus(n);return}selected=n.id;renderCard(n.id);renderGraph();focus(n)}).onBackgroundClick(()=>{selected=null;renderCard();renderGraph()}).enableNodeDrag(false);graph.d3Force('charge').strength(-150);graph.d3Force('link').distance(l=>l.hidden?90:110).strength(l=>l.hidden?.08:.58);graph.d3VelocityDecay(.3);window.addEventListener('resize',resizeGraph)}
-function updateModelSummary(){if(!tables.usecases)return;const all=graphData('all',false),nodeCount=all.nodes.filter(n=>n.type!=='cluster').length,linkCount=all.links.filter(l=>!l.hidden).length,usecaseCount=tables.usecases?.rows?.length||0,version=data.meta?.version||'—',updated=data.meta?.updated?new Date(`${data.meta.updated}T00:00:00`).toLocaleDateString(lang==='de'?'de-CH':'en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';$('modelSummary').textContent=lang==='de'?`${usecaseCount} Anwendungsfälle · ${nodeCount} Knoten · ${linkCount} Beziehungen`:`${usecaseCount} use cases · ${nodeCount} nodes · ${linkCount} relations`;$('modelUpdated').textContent=lang==='de'?`Version ${version} · Aktualisiert ${updated}`:`Version ${version} · Updated ${updated}`}
-function renderGraph(){if(!graph)return;lastGraph=graphData();const nodeCount=lastGraph.nodes.filter(n=>n.type!=='cluster').length,linkCount=lastGraph.links.filter(l=>!l.hidden).length,meta=`${nodeCount} ${lang==='de'?'Knoten':'nodes'} · ${linkCount} ${lang==='de'?'Beziehungen':'relations'}`;$('graphMeta').textContent=meta;$('workspaceMeta').textContent=meta;$('hud').innerHTML=[...new Set(lastGraph.links.filter(l=>!l.hidden).map(l=>l.label))].map(x=>`<span class="chip">${E(x)}</span>`).join('');graph.graphData(lastGraph);setTimeout(()=>graph.zoomToFit(700,90),300)}
-function focus(n){const d=220,r=1+d/Math.hypot(n.x||1,n.y||1,n.z||1);graph.cameraPosition({x:(n.x||0)*r,y:(n.y||0)*r,z:(n.z||0)*r},n,700)}
-function renderCard(id){const card=$('nodeCard'),body=$('workspaceBody');if(!id){card.classList.remove('visible');body.classList.remove('has-detail');card.innerHTML='';requestAnimationFrame(resizeGraph);return}const row=lastGraph.rows.get(id)||{};card.classList.add('visible');body.classList.add('has-detail');card.innerHTML=`<header><div><h3>${E(id.split(':').slice(1).join(':'))}</h3><p>${E(id.split(':')[0])}</p></div><button class="close" aria-label="${lang==='de'?'Details schliessen':'Close details'}" onclick="selected=null;renderCard();renderGraph()">×</button></header><dl>${Object.entries(row).slice(0,9).map(([k,v])=>`<dt>${E(k)}</dt><dd>${E(V(v))}</dd>`).join('')}</dl>`;requestAnimationFrame(()=>{resizeGraph();setTimeout(()=>graph.zoomToFit(500,80),80)})}
-async function load(){const r=await fetch(DATA_URL,{cache:'no-store'});data=await r.json();tables=data.tables||{};initGraph();applyCopy()}
-$('languageMode').onchange=e=>{lang=e.target.value;localStorage.setItem(LANG_KEY,lang);applyCopy()};$('graphMode').onchange=e=>{mode=e.target.value;localStorage.setItem(MODE_KEY,mode);updateModelSummary();renderGraph()};$('fitGraph').onclick=()=>graph.zoomToFit(700,90);$('resetFilter').onclick=()=>{$('graphSearch').value='';selected=null;renderCard();renderGraph()};$('graphSearch').oninput=renderGraph;document.querySelectorAll('.scenario').forEach(b=>b.onclick=()=>{scenario=b.dataset.scenario;document.querySelectorAll('.scenario').forEach(x=>x.setAttribute('aria-selected',String(x===b)));selected=null;renderCard();renderGraph()});load();
-</script>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#top">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>IPM</span>
+          <span class="brand-subtitle">Information Process Management</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="#graph" id="navGraph">Model</a>
+          <a class="nav-link" href="#approach" id="navMethod">Method</a>
+          <a class="nav-link" href="#about" id="navAbout">About</a>
+        </nav>
+        <div class="topbar-actions">
+          <div class="theme-toggle" role="group" aria-label="Appearance" id="themeToggle">
+            <button class="theme-option" type="button" data-theme-value="system" aria-label="Use system theme" title="System">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+            </button>
+            <button class="theme-option" type="button" data-theme-value="light" aria-label="Use light theme" title="Light">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </button>
+            <button class="theme-option" type="button" data-theme-value="dark" aria-label="Use dark theme" title="Dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+          </div>
+          <select class="select-control" id="languageMode" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="de">DE</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <header class="page-header">
+        <div class="page-header-copy">
+          <p class="eyebrow" id="heroEyebrow">BIM · Information management · FM</p>
+          <h1 class="page-title" id="heroTitle">Information requirements, connected to delivery.</h1>
+          <p class="page-description" id="heroLead">IPM links use cases, processes, information requirements, roles, tools and FM outputs in one navigable model.</p>
+          <div class="page-meta" aria-live="polite">
+            <span id="modelSummary">Loading model data…</span>
+            <span id="modelUpdated"></span>
+          </div>
+        </div>
+        <div class="page-header-actions">
+          <a class="button primary" href="#graph" id="exploreCta">Open information model</a>
+        </div>
+      </header>
+
+      <section class="section graph-section" id="graph">
+        <header class="section-header">
+          <div class="section-header-copy">
+            <p class="eyebrow" id="graphEyebrow">Interactive workspace</p>
+            <h2 class="section-title" id="graphTitle">Explore the information model.</h2>
+          </div>
+          <p class="section-header-description" id="graphLead">Select a scenario, inspect relationships and open a node to review its structured source information.</p>
+        </header>
+
+        <div class="workspace">
+          <div class="workspace-header">
+            <div>
+              <h3 id="workspaceTitle">Information model</h3>
+              <p id="workspaceDescription">Use cases, delivery processes, information and operational outputs</p>
+            </div>
+            <span class="workspace-meta" id="workspaceMeta"></span>
+          </div>
+
+          <div class="scenario-tabs" role="tablist" aria-label="Scenarios" id="scenarioTabs">
+            <button class="scenario" data-scenario="owner" aria-selected="true" tabindex="0" role="tab"><strong id="s1t">Owner requirements</strong><span id="s1p">Use cases → information order</span></button>
+            <button class="scenario" data-scenario="roles" aria-selected="false" tabindex="-1" role="tab"><strong id="s2t">Roles & skills</strong><span id="s2p">Processes → responsibility</span></button>
+            <button class="scenario" data-scenario="ids" aria-selected="false" tabindex="-1" role="tab"><strong id="s3t">IDS & checking</strong><span id="s3p">Requirements → validation</span></button>
+            <button class="scenario" data-scenario="fm" aria-selected="false" tabindex="-1" role="tab"><strong id="s4t">BIM2FM</strong><span id="s4p">Assets → operational output</span></button>
+          </div>
+
+          <div class="graph-toolbar" aria-label="Graph controls">
+            <div class="toolbar-group">
+              <label for="graphMode" id="viewLabel">View</label>
+              <select id="graphMode">
+                <option id="modeCluster" value="cluster">Story clusters</option>
+                <option id="modeOrbit" value="orbit">3D orbit</option>
+              </select>
+              <button type="button" id="fitGraph">Fit</button>
+              <button type="button" id="resetFilter">Reset</button>
+            </div>
+            <div class="toolbar-group search">
+              <input id="graphSearch" type="search" placeholder="Filter graph nodes…" aria-label="Filter graph nodes" />
+              <span id="graphMeta" class="workspace-meta"></span>
+            </div>
+          </div>
+
+          <div class="workspace-body" id="workspaceBody">
+            <div class="graph-wrap">
+              <div id="graph3d" tabindex="0" aria-label="Interactive three-dimensional information graph"></div>
+              <div class="graph-state" id="graphState" role="status">
+                <div class="state-panel">
+                  <strong id="graphStateTitle">Loading information model</strong>
+                  <span id="graphStateText">Reading the structured GitHub data source.</span>
+                  <button class="button" type="button" id="graphStateAction" hidden>Reset filter</button>
+                </div>
+              </div>
+              <div class="graph-legend" id="hud"></div>
+            </div>
+            <aside id="nodeCard" class="node-panel" aria-live="polite"></aside>
+          </div>
+
+          <div class="source-note" id="sourceNote">
+            <span><span id="sourceLabel">Source</span>: <strong>data/ipm.json</strong></span>
+            <span class="source-status" id="sourceStatus">Verified structure</span>
+            <span id="sourceUpdated"></span>
+            <span id="sourceVersion"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="approach">
+        <header class="section-header">
+          <div class="section-header-copy">
+            <p class="eyebrow" id="problemEyebrow">Method</p>
+            <h2 class="section-title" id="problemTitle">From purpose to operational use.</h2>
+          </div>
+          <p class="section-header-description" id="problemLead">IPM structures BIM requirements as a traceable information flow rather than a collection of disconnected documents.</p>
+        </header>
+        <div class="process-flow">
+          <article class="process-step"><span class="number">01</span><h3 id="c1t">Purpose</h3><p id="c1p">Start with the owner and operator decisions the information must support.</p></article>
+          <article class="process-step"><span class="number">02</span><h3 id="c2t">Information order</h3><p id="c2p">Derive processes, responsibilities, data needs and delivery packages.</p></article>
+          <article class="process-step"><span class="number">03</span><h3 id="c3t">Validation</h3><p id="c3p">Translate requirements into structured checks, IDS rules and evidence.</p></article>
+          <article class="process-step"><span class="number">04</span><h3 id="c4t">Operational use</h3><p id="c4p">Connect verified information to asset management, CAFM and lifecycle decisions.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <div class="about-grid">
+          <div class="profile">
+            <p class="eyebrow" id="aboutEyebrow">About</p>
+            <h3>Jindrich Hozak</h3>
+            <p id="profileText">Architect and BIM / information-management specialist working across digital building, lifecycle data, BIM2FM, model quality and process transformation.</p>
+            <p class="focus-line" id="focusLine">Focus: BIM2FM · IFC / IDS · Digital Twin · Solibri · dRofus · Data Strategy</p>
+          </div>
+          <div class="about-copy">
+            <h2 id="aboutTitle">A connected information-management prototype.</h2>
+            <p id="aboutText">The model demonstrates how operational purpose, processes, responsibilities, requirements and validation can be connected in a form that decision-makers can inspect.</p>
+            <p id="aboutText2">The next steps include explicit KBOB and FM process mappings, role and skill-gap analysis, and scenario-based generation of information requirements.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>IPM · BIMfabrik GitHub Pages</span>
+        <span id="footerText">Connected BIM information management.</span>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const DATA_URL = "./data/ipm.json";
+    const LANG_KEY = "ipm-language-v1";
+    const MODE_KEY = "ipm-graph-mode-v1";
+    const THEME_KEY = "ipm-theme-v1";
+
+    const colors = {
+      usecase: "#1f9cff",
+      process: "#8f6fe8",
+      product: "#2faf78",
+      assetType: "#1ba8a1",
+      input: "#d58d30",
+      output: "#d1a627",
+      actor: "#d65668",
+      evidence: "#7f8a9d",
+      cluster: "#4e9fbd"
+    };
+
+    const relationColors = {
+      process: "#9276d8",
+      tool: "#2faf78",
+      input: "#d58d30",
+      output: "#d1a627",
+      supports: "#1ba8a1",
+      requires: "#1f82d0",
+      owner: "#d65668",
+      evidence: "#8792a5"
+    };
+
+    const copy = {
+      en: {
+        navGraph: "Model", navMethod: "Method", navAbout: "About",
+        heroEyebrow: "BIM · Information management · FM",
+        heroTitle: "Information requirements, connected to delivery.",
+        heroLead: "IPM links use cases, processes, information requirements, roles, tools and FM outputs in one navigable model.",
+        exploreCta: "Open information model",
+        graphEyebrow: "Interactive workspace", graphTitle: "Explore the information model.",
+        graphLead: "Select a scenario, inspect relationships and open a node to review its structured source information.",
+        workspaceTitle: "Information model", workspaceDescription: "Use cases, delivery processes, information and operational outputs",
+        viewLabel: "View", modeCluster: "Story clusters", modeOrbit: "3D orbit", fitGraph: "Fit", resetFilter: "Reset",
+        s1t: "Owner requirements", s1p: "Use cases → information order",
+        s2t: "Roles & skills", s2p: "Processes → responsibility",
+        s3t: "IDS & checking", s3p: "Requirements → validation",
+        s4t: "BIM2FM", s4p: "Assets → operational output",
+        sourceLabel: "Source", sourceStatus: "Verified structure",
+        problemEyebrow: "Method", problemTitle: "From purpose to operational use.",
+        problemLead: "IPM structures BIM requirements as a traceable information flow rather than a collection of disconnected documents.",
+        c1t: "Purpose", c1p: "Start with the owner and operator decisions the information must support.",
+        c2t: "Information order", c2p: "Derive processes, responsibilities, data needs and delivery packages.",
+        c3t: "Validation", c3p: "Translate requirements into structured checks, IDS rules and evidence.",
+        c4t: "Operational use", c4p: "Connect verified information to asset management, CAFM and lifecycle decisions.",
+        aboutEyebrow: "About",
+        profileText: "Architect and BIM / information-management specialist working across digital building, lifecycle data, BIM2FM, model quality and process transformation.",
+        focusLine: "Focus: BIM2FM · IFC / IDS · Digital Twin · Solibri · dRofus · Data Strategy",
+        aboutTitle: "A connected information-management prototype.",
+        aboutText: "The model demonstrates how operational purpose, processes, responsibilities, requirements and validation can be connected in a form that decision-makers can inspect.",
+        aboutText2: "The next steps include explicit KBOB and FM process mappings, role and skill-gap analysis, and scenario-based generation of information requirements.",
+        footerText: "Connected BIM information management."
+      },
+      de: {
+        navGraph: "Modell", navMethod: "Methode", navAbout: "Über",
+        heroEyebrow: "BIM · Informationsmanagement · FM",
+        heroTitle: "Informationsanforderungen mit der Lieferung verbinden.",
+        heroLead: "IPM verbindet Anwendungsfälle, Prozesse, Informationsanforderungen, Rollen, Werkzeuge und FM-Outputs in einem navigierbaren Modell.",
+        exploreCta: "Informationsmodell öffnen",
+        graphEyebrow: "Interaktiver Arbeitsbereich", graphTitle: "Informationsmodell erkunden.",
+        graphLead: "Szenario wählen, Beziehungen untersuchen und einen Knoten öffnen, um strukturierte Quelldaten zu prüfen.",
+        workspaceTitle: "Informationsmodell", workspaceDescription: "Anwendungsfälle, Lieferprozesse, Informationen und betriebliche Outputs",
+        viewLabel: "Ansicht", modeCluster: "Themencluster", modeOrbit: "3D-Orbit", fitGraph: "Einpassen", resetFilter: "Zurücksetzen",
+        s1t: "Bauherrenanforderungen", s1p: "Anwendungsfälle → Informationsbestellung",
+        s2t: "Rollen & Skills", s2p: "Prozesse → Verantwortung",
+        s3t: "IDS & Prüfung", s3p: "Anforderungen → Validierung",
+        s4t: "BIM2FM", s4p: "Anlagen → Betriebsoutput",
+        sourceLabel: "Quelle", sourceStatus: "Struktur geprüft",
+        problemEyebrow: "Methode", problemTitle: "Vom Zweck zur betrieblichen Nutzung.",
+        problemLead: "IPM strukturiert BIM-Anforderungen als nachvollziehbaren Informationsfluss statt als Sammlung getrennter Dokumente.",
+        c1t: "Zweck", c1p: "Mit den Entscheidungen beginnen, welche die Informationen für Bauherrschaft und Betrieb unterstützen müssen.",
+        c2t: "Informationsbestellung", c2p: "Prozesse, Verantwortlichkeiten, Datenbedarf und Lieferpakete daraus ableiten.",
+        c3t: "Validierung", c3p: "Anforderungen in strukturierte Prüfungen, IDS-Regeln und Nachweise übersetzen.",
+        c4t: "Betriebliche Nutzung", c4p: "Geprüfte Informationen mit Asset Management, CAFM und Lebenszyklusentscheiden verbinden.",
+        aboutEyebrow: "Über das Projekt",
+        profileText: "Architekt und BIM-/Informationsmanagement-Spezialist mit Fokus auf Digital Building, Lebenszyklusdaten, BIM2FM, Modellqualität und Prozesstransformation.",
+        focusLine: "Fokus: BIM2FM · IFC / IDS · Digital Twin · Solibri · dRofus · Datenstrategie",
+        aboutTitle: "Ein verbundener Informationsmanagement-Prototyp.",
+        aboutText: "Das Modell zeigt, wie betrieblicher Zweck, Prozesse, Verantwortlichkeiten, Anforderungen und Validierung für Entscheidungsträger nachvollziehbar verbunden werden können.",
+        aboutText2: "Die nächsten Schritte umfassen explizite KBOB- und FM-Prozess-Mappings, Rollen- und Skill-Gap-Analysen sowie die szenariobasierte Generierung von Informationsanforderungen.",
+        footerText: "Verbundenes BIM-Informationsmanagement."
+      }
+    };
+
+    let data = { tables: {} };
+    let tables = {};
+    let lang = localStorage.getItem(LANG_KEY) || "en";
+    let mode = localStorage.getItem(MODE_KEY) || "cluster";
+    let themeChoice = localStorage.getItem(THEME_KEY) || "system";
+    let graph;
+    let lastGraph = { nodes: [], links: [], rows: new Map() };
+    let selected = null;
+    let scenario = "owner";
+
+    const $ = (id) => document.getElementById(id);
+    const V = (value) => value && typeof value === "object" && !Array.isArray(value)
+      ? (value[lang] ?? value.en ?? value.de ?? Object.values(value)[0] ?? "")
+      : (value ?? "");
+    const E = (value) => String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+    function resolvedTheme(choice = themeChoice) {
+      if (choice !== "system") return choice;
+      return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+
+    function updateThemeButtons() {
+      document.querySelectorAll("[data-theme-value]").forEach((button) => {
+        const selectedTheme = button.dataset.themeValue === themeChoice;
+        button.setAttribute("aria-pressed", String(selectedTheme));
+        const labels = lang === "de"
+          ? { system: "Systemdesign verwenden", light: "Helles Design verwenden", dark: "Dunkles Design verwenden" }
+          : { system: "Use system theme", light: "Use light theme", dark: "Use dark theme" };
+        button.setAttribute("aria-label", labels[button.dataset.themeValue]);
+      });
+      $("themeToggle").setAttribute("aria-label", lang === "de" ? "Darstellung" : "Appearance");
+    }
+
+    function applyTheme(choice, persist = true) {
+      themeChoice = choice;
+      if (persist) localStorage.setItem(THEME_KEY, choice);
+      const resolved = resolvedTheme(choice);
+      document.documentElement.dataset.themeChoice = choice;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.style.colorScheme = resolved;
+      updateThemeButtons();
+      if (graph) {
+        graph.nodeThreeObject(nodeObject);
+        renderGraph(false);
+      }
+    }
+
+    function applyCopy() {
+      document.documentElement.lang = lang;
+      Object.entries(copy[lang]).forEach(([key, value]) => {
+        const element = $(key);
+        if (element) element.textContent = value;
+      });
+      $("languageMode").value = lang;
+      $("graphMode").value = mode;
+      const searchLabel = lang === "de" ? "Graph-Knoten filtern…" : "Filter graph nodes…";
+      $("graphSearch").placeholder = searchLabel;
+      $("graphSearch").setAttribute("aria-label", searchLabel);
+      $("graph3d").setAttribute("aria-label", lang === "de" ? "Interaktiver dreidimensionaler Informationsgraph" : "Interactive three-dimensional information graph");
+      updateThemeButtons();
+      updateModelSummary();
+      renderGraph(false);
+    }
+
+    const clusterPositions = [
+      [-270, 150, -70], [0, 170, 30], [270, 150, -70], [-260, -100, 60], [0, -120, -55],
+      [260, -100, 60], [-160, -330, -10], [160, -330, 45], [0, 360, 0], [360, 0, -30]
+    ];
+
+    function graphData(scope = scenario, includeSearch = true) {
+      const nodes = new Map();
+      const links = [];
+      const rows = new Map();
+      const members = new Map();
+      const clusters = [];
+
+      const add = (label, type, row, cluster) => {
+        label = V(label);
+        if (!label) return null;
+        const id = `${type}:${label}`;
+        if (!nodes.has(id)) {
+          nodes.set(id, {
+            id, label, type,
+            color: colors[type] || "#7f8a9d",
+            val: { usecase: 10, process: 7, product: 6, input: 4, output: 4, actor: 4, evidence: 3, assetType: 5 }[type] || 4,
+            cluster: cluster?.key
+          });
+        }
+        if (cluster) {
+          if (!members.has(cluster.key)) members.set(cluster.key, new Set());
+          members.get(cluster.key).add(id);
+        }
+        if (row) rows.set(id, row);
+        return id;
+      };
+
+      const link = (source, target, label, hidden = false) => {
+        if (!source || !target) return;
+        const active = selected && (source === selected || target === selected);
+        const muted = selected && !active;
+        links.push({
+          source, target, label, hidden,
+          color: hidden ? "transparent" : muted ? "rgba(120,130,150,.16)" : (relationColors[label] || "rgba(120,130,150,.7)"),
+          width: hidden ? 0 : active ? 4 : muted ? 1 : 2,
+          particles: hidden ? 0 : active ? 6 : 0
+        });
+      };
+
+      (tables.usecases?.rows || []).forEach((row, index) => {
+        const position = clusterPositions[index % clusterPositions.length];
+        const cluster = { key: `cluster:${index}`, label: V(row.name), x: position[0], y: position[1], z: position[2] };
+        clusters.push(cluster);
+        const usecase = add(row.name, "usecase", row, cluster);
+        const process = add(row.process, "process", null, cluster);
+        const product = add(row.product, "product", null, cluster);
+        const input = add(row.input, "input", null, cluster);
+        const output = add(row.output, "output", null, cluster);
+        link(usecase, process, "process");
+        link(usecase, product, "tool");
+        link(input, usecase, "input");
+        link(usecase, output, "output");
+      });
+
+      (tables.processes?.rows || []).forEach((row) => {
+        const process = add(row.name, "process", row);
+        const owner = add(row.owner, "actor");
+        const evidence = add(row.evidence, "evidence");
+        link(process, owner, "owner");
+        link(process, evidence, "evidence");
+      });
+
+      (tables.products?.rows || []).forEach((row) => rows.set(`product:${V(row.name)}`, row));
+      (tables.inputsOutputs?.rows || []).forEach((row) => {
+        const type = String(V(row.kind)).toLowerCase() === "output" ? "output" : "input";
+        rows.set(`${type}:${V(row.name)}`, row);
+      });
+      (tables.actors?.rows || []).forEach((row) => rows.set(`actor:${V(row.name)}`, row));
+
+      if (mode === "cluster") {
+        clusters.forEach((cluster) => {
+          nodes.set(cluster.key, {
+            id: cluster.key,
+            label: cluster.label,
+            type: "cluster",
+            val: 1,
+            color: colors.cluster,
+            fx: cluster.x,
+            fy: cluster.y,
+            fz: cluster.z,
+            memberCount: (members.get(cluster.key) || new Set()).size
+          });
+          (members.get(cluster.key) || []).forEach((id) => link(cluster.key, id, "cluster", true));
+        });
+      }
+
+      const allowedByScope = {
+        owner: new Set(["usecase", "process", "input", "output", "product"]),
+        roles: new Set(["usecase", "process", "actor"]),
+        ids: new Set(["usecase", "process", "input", "output", "evidence"]),
+        fm: new Set(["usecase", "process", "input", "output", "product"]),
+        all: new Set(["usecase", "process", "product", "assetType", "input", "output", "actor", "evidence"])
+      };
+      const allowed = allowedByScope[scope] || allowedByScope.owner;
+      let filteredNodes = [...nodes.values()].filter((node) => node.type === "cluster" || allowed.has(node.type));
+      const ids = new Set(filteredNodes.map((node) => node.id));
+      let filteredLinks = links.filter((item) => {
+        const source = typeof item.source === "object" ? item.source.id : item.source;
+        const target = typeof item.target === "object" ? item.target.id : item.target;
+        return ids.has(source) && ids.has(target);
+      });
+
+      const query = includeSearch ? $("graphSearch").value.trim().toLowerCase() : "";
+      if (query) {
+        const keep = new Set(filteredNodes
+          .filter((node) => node.label.toLowerCase().includes(query) || node.type.includes(query))
+          .map((node) => node.id));
+        filteredLinks = filteredLinks.filter((item) => {
+          const source = typeof item.source === "object" ? item.source.id : item.source;
+          const target = typeof item.target === "object" ? item.target.id : item.target;
+          return keep.has(source) || keep.has(target);
+        });
+        filteredLinks.forEach((item) => {
+          keep.add(typeof item.source === "object" ? item.source.id : item.source);
+          keep.add(typeof item.target === "object" ? item.target.id : item.target);
+        });
+        filteredNodes = filteredNodes.filter((node) => keep.has(node.id));
+      }
+
+      return { nodes: filteredNodes, links: filteredLinks, rows };
+    }
+
+    function graphPalette() {
+      const dark = resolvedTheme() === "dark";
+      return dark
+        ? { background: "rgba(16,20,27,.94)", border: "rgba(255,255,255,.16)", text: "#f4f7fb", muted: "rgba(244,247,251,.64)" }
+        : { background: "rgba(255,255,255,.94)", border: "rgba(31,41,55,.18)", text: "#172033", muted: "rgba(23,32,51,.68)" };
+    }
+
+    function makeLabel(label, type) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const palette = graphPalette();
+      canvas.width = 512;
+      canvas.height = 128;
+      context.font = "600 34px Inter,system-ui";
+      const text = label.length > 25 ? `${label.slice(0, 24)}…` : label;
+      const width = Math.min(context.measureText(text).width + 36, 480);
+      const x = (512 - width) / 2;
+      context.fillStyle = palette.background;
+      context.beginPath();
+      context.roundRect(x, 28, width, 72, 6);
+      context.fill();
+      context.strokeStyle = palette.border;
+      context.stroke();
+      context.fillStyle = palette.text;
+      context.textAlign = "center";
+      context.fillText(text, 256, 63);
+      context.font = "500 16px Inter,system-ui";
+      context.fillStyle = palette.muted;
+      context.fillText(type, 256, 86);
+      const texture = new THREE.CanvasTexture(canvas);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
+      sprite.scale.set(56, 14, 1);
+      return sprite;
+    }
+
+    function nodeObject(node) {
+      if (node.type === "cluster") {
+        const group = new THREE.Group();
+        const size = 90 + Math.min(70, (node.memberCount || 4) * 11);
+        const geometry = new THREE.SphereGeometry(size, 36, 24);
+        group.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+          color: 0x4e9fbd, transparent: true, opacity: resolvedTheme() === "dark" ? 0.055 : 0.035, wireframe: true, depthWrite: false
+        })));
+        const label = makeLabel(node.label, lang === "de" ? "Themencluster" : "story cluster");
+        label.position.set(0, size + 18, 0);
+        label.scale.set(88, 22, 1);
+        group.add(label);
+        return group;
+      }
+      const group = new THREE.Group();
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(node.val, 24, 24),
+        new THREE.MeshLambertMaterial({ color: node.color, emissive: node.color, emissiveIntensity: resolvedTheme() === "dark" ? 0.08 : 0.02 })
+      );
+      group.add(sphere);
+      const label = makeLabel(node.label, node.type);
+      label.position.set(0, node.val + 9, 0);
+      group.add(label);
+      return group;
+    }
+
+    function resizeGraph() {
+      if (!graph) return;
+      const element = $("graph3d");
+      graph.width(element.clientWidth);
+      graph.height(element.clientHeight);
+    }
+
+    function initGraph() {
+      const element = $("graph3d");
+      graph = ForceGraph3D({ controlType: "orbit" })(element)
+        .backgroundColor("rgba(0,0,0,0)")
+        .nodeId("id")
+        .nodeThreeObject(nodeObject)
+        .nodeLabel((node) => node.type === "cluster" ? node.label : `${node.label} · ${node.type}`)
+        .linkLabel((link) => link.hidden ? "" : link.label)
+        .linkColor((link) => link.color)
+        .linkWidth((link) => link.width)
+        .linkOpacity(0.72)
+        .linkDirectionalParticles((link) => link.particles)
+        .linkDirectionalParticleWidth(2)
+        .linkDirectionalParticleSpeed(0.008)
+        .linkDirectionalArrowLength((link) => link.hidden ? 0 : 4)
+        .onNodeClick((node) => {
+          if (node.type === "cluster") { focusNode(node); return; }
+          selected = node.id;
+          renderCard(node.id);
+          renderGraph(false);
+          focusNode(node);
+        })
+        .onBackgroundClick(() => {
+          selected = null;
+          renderCard();
+          renderGraph(false);
+        })
+        .enableNodeDrag(false);
+      graph.d3Force("charge").strength(-150);
+      graph.d3Force("link").distance((link) => link.hidden ? 90 : 110).strength((link) => link.hidden ? 0.08 : 0.58);
+      graph.d3VelocityDecay(0.3);
+      window.addEventListener("resize", resizeGraph);
+    }
+
+    function setGraphState(type, detail = "") {
+      const state = $("graphState");
+      const title = $("graphStateTitle");
+      const text = $("graphStateText");
+      const action = $("graphStateAction");
+      action.hidden = true;
+      if (type === "ready") { state.hidden = true; return; }
+      state.hidden = false;
+      const messages = lang === "de"
+        ? {
+            loading: ["Informationsmodell wird geladen", "Die strukturierte GitHub-Datenquelle wird gelesen."],
+            error: ["Informationsmodell nicht verfügbar", detail || "Die Datenquelle konnte nicht geladen werden."],
+            empty: ["Keine passenden Knoten", "Filter zurücksetzen oder einen anderen Suchbegriff verwenden."]
+          }
+        : {
+            loading: ["Loading information model", "Reading the structured GitHub data source."],
+            error: ["Information model unavailable", detail || "The data source could not be loaded."],
+            empty: ["No matching nodes", "Reset the filter or use another search term."]
+          };
+      [title.textContent, text.textContent] = messages[type];
+      if (type === "empty") {
+        action.hidden = false;
+        action.textContent = lang === "de" ? "Filter zurücksetzen" : "Reset filter";
+      }
+    }
+
+    function updateModelSummary() {
+      if (!tables.usecases) return;
+      const all = graphData("all", false);
+      const nodeCount = all.nodes.filter((node) => node.type !== "cluster").length;
+      const linkCount = all.links.filter((link) => !link.hidden).length;
+      const usecaseCount = tables.usecases?.rows?.length || 0;
+      const version = data.meta?.version || "—";
+      const updated = data.meta?.updated
+        ? new Date(`${data.meta.updated}T00:00:00`).toLocaleDateString(lang === "de" ? "de-CH" : "en-GB", { day: "2-digit", month: "short", year: "numeric" })
+        : "—";
+      $("modelSummary").textContent = lang === "de"
+        ? `${usecaseCount} Anwendungsfälle · ${nodeCount} Knoten · ${linkCount} Beziehungen`
+        : `${usecaseCount} use cases · ${nodeCount} nodes · ${linkCount} relations`;
+      $("modelUpdated").textContent = lang === "de" ? `Version ${version} · Aktualisiert ${updated}` : `Version ${version} · Updated ${updated}`;
+      $("sourceUpdated").textContent = lang === "de" ? `Aktualisiert ${updated}` : `Updated ${updated}`;
+      $("sourceVersion").textContent = `Version ${version}`;
+    }
+
+    function renderGraph(fit = true) {
+      if (!graph) return;
+      lastGraph = graphData();
+      const nodeCount = lastGraph.nodes.filter((node) => node.type !== "cluster").length;
+      const linkCount = lastGraph.links.filter((link) => !link.hidden).length;
+      const meta = lang === "de" ? `${nodeCount} Knoten · ${linkCount} Beziehungen` : `${nodeCount} nodes · ${linkCount} relations`;
+      $("graphMeta").textContent = meta;
+      $("workspaceMeta").textContent = meta;
+      $("hud").innerHTML = [...new Set(lastGraph.links.filter((link) => !link.hidden).map((link) => link.label))]
+        .map((label) => `<span class="legend-item">${E(label)}</span>`).join("");
+      graph.graphData(lastGraph);
+      if (nodeCount === 0) setGraphState("empty"); else setGraphState("ready");
+      if (fit && nodeCount > 0) setTimeout(() => graph.zoomToFit(650, 80), 250);
+    }
+
+    function focusNode(node) {
+      const distance = 220;
+      const ratio = 1 + distance / Math.hypot(node.x || 1, node.y || 1, node.z || 1);
+      graph.cameraPosition({ x: (node.x || 0) * ratio, y: (node.y || 0) * ratio, z: (node.z || 0) * ratio }, node, 650);
+    }
+
+    function renderCard(id) {
+      const card = $("nodeCard");
+      const body = $("workspaceBody");
+      if (!id) {
+        card.classList.remove("visible");
+        body.classList.remove("has-detail");
+        card.innerHTML = "";
+        requestAnimationFrame(resizeGraph);
+        return;
+      }
+      const row = lastGraph.rows.get(id) || {};
+      card.classList.add("visible");
+      body.classList.add("has-detail");
+      card.innerHTML = `
+        <header>
+          <div><h3>${E(id.split(":").slice(1).join(":"))}</h3><p>${E(id.split(":")[0])}</p></div>
+          <button class="close-button" type="button" aria-label="${lang === "de" ? "Details schliessen" : "Close details"}" id="closeNode">×</button>
+        </header>
+        <dl>${Object.entries(row).slice(0, 9).map(([key, value]) => `<dt>${E(key)}</dt><dd>${E(V(value))}</dd>`).join("")}</dl>`;
+      $("closeNode").onclick = () => { selected = null; renderCard(); renderGraph(false); };
+      requestAnimationFrame(() => {
+        resizeGraph();
+        setTimeout(() => graph.zoomToFit(450, 70), 80);
+      });
+    }
+
+    function selectScenario(button) {
+      scenario = button.dataset.scenario;
+      document.querySelectorAll(".scenario").forEach((item) => {
+        const active = item === button;
+        item.setAttribute("aria-selected", String(active));
+        item.tabIndex = active ? 0 : -1;
+      });
+      selected = null;
+      renderCard();
+      renderGraph();
+    }
+
+    async function load() {
+      setGraphState("loading");
+      try {
+        const response = await fetch(DATA_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        data = await response.json();
+        tables = data.tables || {};
+        initGraph();
+        applyCopy();
+      } catch (error) {
+        console.error(error);
+        setGraphState("error", error instanceof Error ? error.message : "");
+        $("modelSummary").textContent = lang === "de" ? "Datenquelle nicht verfügbar" : "Data source unavailable";
+      }
+    }
+
+    $("languageMode").onchange = (event) => {
+      lang = event.target.value;
+      localStorage.setItem(LANG_KEY, lang);
+      applyCopy();
+    };
+    $("graphMode").onchange = (event) => {
+      mode = event.target.value;
+      localStorage.setItem(MODE_KEY, mode);
+      updateModelSummary();
+      renderGraph();
+    };
+    $("fitGraph").onclick = () => graph?.zoomToFit(650, 80);
+    $("resetFilter").onclick = () => {
+      $("graphSearch").value = "";
+      selected = null;
+      renderCard();
+      renderGraph();
+    };
+    $("graphStateAction").onclick = $("resetFilter").onclick;
+    $("graphSearch").oninput = () => renderGraph(false);
+
+    document.querySelectorAll("[data-theme-value]").forEach((button) => {
+      button.onclick = () => applyTheme(button.dataset.themeValue);
+    });
+    document.querySelectorAll(".scenario").forEach((button) => {
+      button.onclick = () => selectScenario(button);
+      button.onkeydown = (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const items = [...document.querySelectorAll(".scenario")];
+        const current = items.indexOf(button);
+        const next = event.key === "Home" ? 0
+          : event.key === "End" ? items.length - 1
+          : event.key === "ArrowRight" ? (current + 1) % items.length
+          : (current - 1 + items.length) % items.length;
+        items[next].focus();
+        selectScenario(items[next]);
+      };
+    });
+
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if (themeChoice === "system") applyTheme("system", false);
+    });
+
+    applyTheme(themeChoice, false);
+    load();
+  </script>
 </body>
 </html>
