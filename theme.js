@@ -65,6 +65,8 @@
     document.body.prepend(backdrop);
     document.body.prepend(sidebar);
     document.body.classList.add("has-dashboard-sidebar");
+    document.body.dataset.uiComponent = "app-shell";
+    sidebar.dataset.uiComponent = "app-shell-sidebar";
 
     const collapsed = localStorage.getItem("ipm-sidebar-collapsed") === "true";
     const collapseButton = sidebar.querySelector(".dashboard-sidebar__collapse");
@@ -112,6 +114,7 @@
     const host = nav.querySelector(".navlinks") || nav.querySelector(":scope > div") || nav;
     const group = document.createElement("div");
     group.className = "ui-theme-toggle";
+    group.dataset.uiComponent = "theme-toggle";
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", "Appearance");
     [
@@ -132,10 +135,27 @@
     apply(choice, false);
   }
 
+  function installComponentContracts() {
+    document.documentElement.dataset.uiComponent = "theme-provider";
+    document.querySelectorAll("#themeToggle, .ui-theme-toggle").forEach((node) => {
+      node.dataset.uiComponent = "theme-toggle";
+    });
+    document.querySelectorAll(".page-header, header.hero").forEach((node) => {
+      node.dataset.uiComponent = "page-header";
+    });
+    document.querySelectorAll(".graph-toolbar, .toolbar").forEach((node) => {
+      node.dataset.uiComponent = "map-toolbar";
+    });
+    document.querySelectorAll(".source-note").forEach((node) => {
+      node.dataset.uiComponent = "source-note";
+    });
+  }
+
   function installUi() {
     installSidebar();
     installNavigation();
     installToggle();
+    installComponentContracts();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installUi);

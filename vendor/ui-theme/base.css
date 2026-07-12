@@ -1,0 +1,6 @@
+html { color-scheme: light; font-family: var(--font-sans); background: var(--background); color: var(--foreground); }
+html.dark, html[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+*, *::before, *::after { box-sizing: border-box; border-color: var(--border); }
+::selection { background: color-mix(in oklch, var(--primary) 20%, transparent); }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
