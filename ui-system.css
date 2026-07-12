@@ -142,10 +142,7 @@ body.lang-de [data-lang="de"] { display: block; }
 }
 
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.35fr);
-  gap: 32px;
-  align-items: end;
+  display: block;
   padding: 42px 0 28px !important;
   border-bottom: 1px solid var(--border);
 }
@@ -202,6 +199,20 @@ body.lang-de [data-lang="de"] { display: block; }
 .flow { gap: 0 !important; padding: 0 !important; overflow: hidden; }
 .flow b { flex: 1 1 8rem; border: 0 !important; border-radius: 0 !important; background: transparent !important; padding: 12px !important; color: var(--foreground); }
 .flow span { color: var(--muted-foreground) !important; }
+.path {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px !important;
+  margin: 20px 0 0 !important;
+  padding: 12px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--surface-subtle) !important;
+  overflow-wrap: anywhere;
+}
+.path b { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding: 3px !important; }
+.path i { color: var(--muted-foreground); font-style: normal; }
 .note { border: 1px solid var(--border) !important; border-left: 3px solid var(--info) !important; padding: 14px 16px !important; }
 .side { top: 72px !important; padding: 16px !important; }
 .side a { color: var(--muted-foreground) !important; }
@@ -249,7 +260,6 @@ body.galaxy-active .graph-shell { box-shadow: none !important; }
 
 @media (max-width: 900px) {
   .shell, .wrap { width: min(100% - 32px, 88rem) !important; }
-  .hero { grid-template-columns: 1fr; gap: 12px; }
   .article { grid-template-columns: 1fr !important; gap: 20px !important; }
   .side { position: static !important; order: 0 !important; }
   .workspace { grid-template-columns: 1fr !important; }
