@@ -98,22 +98,11 @@
   }
 
   function installNavigation() {
-    if (!location.pathname.includes("/knowledge/")) return;
+    if (!location.pathname.includes("/knowledge/") && !location.pathname.includes("/tables/")) return;
     const nav = document.querySelector(".navlinks");
     if (!nav) return;
-    const depth = location.pathname.replace(/\/$/, "").split("/").length;
-    const root = depth > 3 ? "../../" : "../";
-    const knowledge = depth > 3 ? "../" : "./";
-    nav.setAttribute("aria-label", "Primary navigation");
-    nav.innerHTML = [
-      [root, "Home"],
-      [`${root}#graph`, "Model"],
-      [`${root}#approach`, "Method"],
-      [knowledge, "Knowledge", true],
-      [`${root}tables/`, "Tables"]
-    ].map(([href, label, current]) =>
-      `<a class="pill" href="${href}"${current ? ' aria-current="page"' : ""}>${label}</a>`
-    ).join("");
+    nav.removeAttribute("aria-label");
+    nav.innerHTML = "";
   }
 
   function installToggle() {
