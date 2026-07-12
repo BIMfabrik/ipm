@@ -85,7 +85,7 @@ jobs:
               )
 
           tags = [
-              '<script src="./ipm-enhancements-v2.js?v=20260712-7"></script>',
+              '<script src="./ipm-enhancements-v2.js?v=20260712-8"></script>',
               '<script src="./galaxy-mode-v1.js?v=20260711-3"></script>',
               '<script src="./graph-stability-v1.js?v=20260711-4"></script>',
           ]
