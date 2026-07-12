@@ -226,7 +226,7 @@ body.lang-de [data-lang="de"] { display: block; }
 }
 .path b { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding: 3px !important; }
 .path i { color: var(--muted-foreground); font-style: normal; }
-.note { border: 1px solid var(--border) !important; border-left: 3px solid var(--info) !important; padding: 14px 16px !important; }
+.note { border: 1px solid var(--border) !important; padding: 14px 16px !important; }
 .side { position: sticky; top: 72px !important; padding: 16px !important; }
 .side h3 { margin: 0 0 8px; font-size: 14px; }
 .side a { display: block; padding: 8px 0; border-top: 1px solid var(--border); }
