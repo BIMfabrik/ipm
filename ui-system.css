@@ -117,6 +117,10 @@ body.lang-de [data-lang="de"] { display: block; }
 .pill:hover, .cta:hover, .control:hover, .nav button:hover, .nav select:hover {
   background: var(--surface-subtle) !important;
 }
+.navlinks .pill[aria-current="page"] {
+  background: var(--surface-subtle) !important;
+  font-weight: 650;
+}
 
 .ui-theme-toggle {
   display: inline-flex !important;
