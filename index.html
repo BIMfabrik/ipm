@@ -1167,6 +1167,7 @@
           renderGraph(false);
         })
         .enableNodeDrag(false);
+      window.ipmGraph = graph;
       graph.d3Force("charge").strength(-150);
       graph.d3Force("link").distance((link) => link.hidden ? 90 : 110).strength((link) => link.hidden ? 0.08 : 0.58);
       graph.d3VelocityDecay(0.3);
@@ -1339,6 +1340,6 @@
     applyTheme(themeChoice, false);
     load();
   </script>
-  <script src="./galaxy-mode-v1.js?v=20260714-1"></script>
+  <script src="./galaxy-mode-v1.js?v=20260714-2"></script>
 </body>
 </html>

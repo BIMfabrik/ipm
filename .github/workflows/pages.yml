@@ -86,7 +86,7 @@ jobs:
 
           tags = [
               '<script src="./ipm-enhancements-v2.js?v=20260712-9"></script>',
-              '<script src="./galaxy-mode-v1.js?v=20260714-1"></script>',
+              '<script src="./galaxy-mode-v1.js?v=20260714-2"></script>',
               '<script src="./graph-stability-v1.js?v=20260711-4"></script>',
           ]
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>')

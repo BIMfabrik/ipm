@@ -2,6 +2,10 @@
   let stars = null;
   let bound = false;
 
+  function currentGraph() {
+    return window.ipmGraph;
+  }
+
   function selectElement() {
     return document.getElementById('graphMode');
   }
@@ -70,7 +74,8 @@
   }
 
   function addStars() {
-    if (stars || typeof graph === 'undefined' || !graph || typeof graph.scene !== 'function') return;
+    const graph = currentGraph();
+    if (stars || !graph || typeof graph.scene !== 'function') return;
     const mobile = window.matchMedia('(max-width:620px)').matches;
     const count = mobile ? 900 : 2400;
     const positions = new Float32Array(count * 3);
@@ -101,7 +106,8 @@
   }
 
   function setControls(enabled) {
-    if (typeof graph === 'undefined' || !graph || typeof graph.controls !== 'function') return;
+    const graph = currentGraph();
+    if (!graph || typeof graph.controls !== 'function') return;
     const controls = graph.controls();
     controls.autoRotate = enabled;
     controls.autoRotateSpeed = .26;
@@ -111,7 +117,8 @@
 
   function apply() {
     const select = selectElement();
-    if (!select || typeof graph === 'undefined' || !graph) return false;
+    const graph = currentGraph();
+    if (!select || !graph) return false;
     const galaxy = select.value === 'galaxy';
     document.body.classList.toggle('galaxy-active', galaxy);
     setControls(galaxy);
