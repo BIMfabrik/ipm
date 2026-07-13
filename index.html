@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Interactive BIM information-process model connecting use cases, processes, roles, data requirements, tools and FM handover." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <title>IPM — Information Process Management</title>
   <script>
     (() => {
@@ -366,8 +367,15 @@
 
     .workspace-body { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
     .workspace-body.has-detail { grid-template-columns: minmax(0, 1fr) 340px; }
-    .graph-wrap { position: relative; min-width: 0; background: var(--graph-background); }
-    #graph3d { height: 680px; }
+    .graph-wrap {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      isolation: isolate;
+      background: var(--graph-background);
+    }
+    #graph3d { height: 680px; overflow: hidden; }
+    #graph3d canvas { display: block; }
     .graph-state {
       position: absolute;
       inset: 0;
@@ -448,11 +456,14 @@
     .node-panel dd { margin: 0; overflow-wrap: anywhere; }
 
     .source-note {
+      position: relative;
+      z-index: 5;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 6px 18px;
       border-top: 1px solid var(--border);
+      background: var(--surface);
       padding: 11px 14px;
       color: var(--muted-foreground);
       font-size: 11px;
@@ -946,8 +957,8 @@
         links.push({
           source, target, label, hidden,
           color: hidden ? "transparent" : muted ? "rgba(120,130,150,.16)" : (relationColors[label] || "rgba(120,130,150,.7)"),
-          width: hidden ? 0 : active ? 4 : muted ? 1 : 2,
-          particles: hidden ? 0 : active ? 6 : 0
+          width: hidden ? 0 : active ? 1.35 : muted ? 0.22 : 0.58,
+          particles: hidden ? 0 : active ? 2 : muted ? 0 : 1
         });
       };
 
@@ -1045,34 +1056,56 @@
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       const palette = graphPalette();
-      canvas.width = 512;
-      canvas.height = 128;
-      context.font = "600 34px Inter,system-ui";
-      const text = label.length > 25 ? `${label.slice(0, 24)}…` : label;
-      const width = Math.min(context.measureText(text).width + 36, 480);
-      const x = (512 - width) / 2;
+      canvas.width = 1024;
+      canvas.height = 256;
+      context.font = "600 62px Inter,system-ui";
+      const text = label.length > 29 ? `${label.slice(0, 28)}…` : label;
+      const width = Math.min(context.measureText(text).width + 112, 944);
+      const x = (1024 - width) / 2;
       context.fillStyle = palette.background;
       context.beginPath();
-      context.roundRect(x, 28, width, 72, 6);
+      context.roundRect(x, 46, width, 164, 18);
       context.fill();
       context.strokeStyle = palette.border;
+      context.lineWidth = 2;
       context.stroke();
+      context.fillStyle = colors[type] || colors.cluster || "#4e9fbd";
+      context.beginPath();
+      context.roundRect(x + 18, 74, 8, 108, 4);
+      context.fill();
       context.fillStyle = palette.text;
       context.textAlign = "center";
-      context.fillText(text, 256, 63);
-      context.font = "500 16px Inter,system-ui";
+      context.textBaseline = "middle";
+      context.fillText(text, 512, 111);
+      context.font = "600 28px Inter,system-ui";
       context.fillStyle = palette.muted;
-      context.fillText(type, 256, 86);
+      context.fillText(type.toUpperCase(), 512, 166);
       const texture = new THREE.CanvasTexture(canvas);
-      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
-      sprite.scale.set(56, 14, 1);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.anisotropy = Math.min(8, graph?.renderer?.().capabilities?.getMaxAnisotropy?.() || 1);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: texture, transparent: true, depthWrite: false, depthTest: false
+      }));
+      sprite.renderOrder = 10;
+      sprite.scale.set(64, 16, 1);
       return sprite;
+    }
+
+    function linkCurveRotation(link) {
+      const source = typeof link.source === "object" ? link.source.id : link.source;
+      const target = typeof link.target === "object" ? link.target.id : link.target;
+      const key = `${source}|${target}`;
+      let hash = 0;
+      for (let index = 0; index < key.length; index += 1) hash = ((hash << 5) - hash + key.charCodeAt(index)) | 0;
+      return (Math.abs(hash) % 628) / 100;
     }
 
     function nodeObject(node) {
       if (node.type === "cluster") {
         const group = new THREE.Group();
-        const size = 90 + Math.min(70, (node.memberCount || 4) * 11);
+        const size = 72 + Math.min(44, (node.memberCount || 4) * 7);
         const geometry = new THREE.SphereGeometry(size, 36, 24);
         group.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
           color: 0x4e9fbd, transparent: true, opacity: resolvedTheme() === "dark" ? 0.055 : 0.035, wireframe: true, depthWrite: false
@@ -1112,11 +1145,14 @@
         .linkLabel((link) => link.hidden ? "" : link.label)
         .linkColor((link) => link.color)
         .linkWidth((link) => link.width)
-        .linkOpacity(0.72)
+        .linkOpacity(0.62)
+        .linkCurvature((link) => link.hidden ? 0 : 0.075)
+        .linkCurveRotation(linkCurveRotation)
         .linkDirectionalParticles((link) => link.particles)
-        .linkDirectionalParticleWidth(2)
-        .linkDirectionalParticleSpeed(0.008)
-        .linkDirectionalArrowLength((link) => link.hidden ? 0 : 4)
+        .linkDirectionalParticleWidth((link) => selected && (link.source?.id === selected || link.target?.id === selected) ? 1.15 : 0.72)
+        .linkDirectionalParticleSpeed(0.0035)
+        .linkDirectionalParticleColor((link) => link.color)
+        .linkDirectionalArrowLength(0)
         .onNodeClick((node) => {
           if (node.type === "cluster") { focusNode(node); return; }
           selected = node.id;

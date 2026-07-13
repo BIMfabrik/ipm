@@ -3,8 +3,8 @@
     "name": {"en": "Information Process Management", "de": "Informationsprozess-Management"},
     "subtitle": {"en": "BIM Lifecycle Intelligence Graph", "de": "BIM-Lebenszyklus-Intelligenzgraph"},
     "description": {"en": "GitHub JSON source for BIM data, lifecycle processes, tools, actors, relations and BIM2FM asset types.", "de": "GitHub-JSON-Quelle für BIM-Daten, Lebenszyklusprozesse, Werkzeuge, Akteure, Beziehungen und BIM2FM-Anlage-/Bauteilarten."},
-    "version": "0.3.0",
-    "updated": "2026-07-09"
+    "version": "0.3.1",
+    "updated": "2026-07-14"
   },
   "tables": {
     "usecases": {
