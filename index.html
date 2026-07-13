@@ -686,6 +686,7 @@
               <select id="graphMode">
                 <option id="modeCluster" value="cluster">Story clusters</option>
                 <option id="modeOrbit" value="orbit">3D orbit</option>
+                <option id="modeGalaxy" value="galaxy">Galaxy showcase</option>
               </select>
               <button type="button" id="fitGraph">Fit</button>
               <button type="button" id="resetFilter">Reset</button>
@@ -798,7 +799,7 @@
         graphEyebrow: "Interactive workspace", graphTitle: "Explore the information model.",
         graphLead: "Select a scenario, inspect relationships and open a node to review its structured source information.",
         workspaceTitle: "Information model", workspaceDescription: "Use cases, delivery processes, information and operational outputs",
-        viewLabel: "View", modeCluster: "Story clusters", modeOrbit: "3D orbit", fitGraph: "Fit", resetFilter: "Reset",
+        viewLabel: "View", modeCluster: "Story clusters", modeOrbit: "3D orbit", modeGalaxy: "Galaxy showcase", fitGraph: "Fit", resetFilter: "Reset",
         s1t: "Owner requirements", s1p: "Use cases → information order",
         s2t: "Roles & skills", s2p: "Processes → responsibility",
         s3t: "IDS & checking", s3p: "Requirements → validation",
@@ -827,7 +828,7 @@
         graphEyebrow: "Interaktiver Arbeitsbereich", graphTitle: "Informationsmodell erkunden.",
         graphLead: "Szenario wählen, Beziehungen untersuchen und einen Knoten öffnen, um strukturierte Quelldaten zu prüfen.",
         workspaceTitle: "Informationsmodell", workspaceDescription: "Anwendungsfälle, Lieferprozesse, Informationen und betriebliche Outputs",
-        viewLabel: "Ansicht", modeCluster: "Themencluster", modeOrbit: "3D-Orbit", fitGraph: "Einpassen", resetFilter: "Zurücksetzen",
+        viewLabel: "Ansicht", modeCluster: "Themencluster", modeOrbit: "3D-Orbit", modeGalaxy: "Galaxie", fitGraph: "Einpassen", resetFilter: "Zurücksetzen",
         s1t: "Bauherrenanforderungen", s1p: "Anwendungsfälle → Informationsbestellung",
         s2t: "Rollen & Skills", s2p: "Prozesse → Verantwortung",
         s3t: "IDS & Prüfung", s3p: "Anforderungen → Validierung",
@@ -1338,5 +1339,6 @@
     applyTheme(themeChoice, false);
     load();
   </script>
+  <script src="./galaxy-mode-v1.js?v=20260714-1"></script>
 </body>
 </html>

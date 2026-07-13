@@ -38,10 +38,10 @@ jobs:
           short_sha = commit_sha[:7]
 
           # Keep Galaxy visible even if a browser delays or caches enhancement JS.
-          orbit = '<option value="orbit">3D orbit</option>'
+          orbit = re.compile(r'(<option(?:\s+id="modeOrbit")?\s+value="orbit">3D orbit</option>)')
           galaxy = '<option value="galaxy">Galaxy showcase</option>'
-          if galaxy not in html:
-              html = html.replace(orbit, orbit + galaxy)
+          if not re.search(r'<option[^>]*value="galaxy"', html):
+              html = orbit.sub(r'\1' + galaxy, html, count=1)
 
           # Expose the exact deployed revision in metadata and in the footer.
           html = re.sub(r'\s*<meta name="ipm-deploy-commit"[^>]*>', '', html)
@@ -86,7 +86,7 @@ jobs:
 
           tags = [
               '<script src="./ipm-enhancements-v2.js?v=20260712-9"></script>',
-              '<script src="./galaxy-mode-v1.js?v=20260711-3"></script>',
+              '<script src="./galaxy-mode-v1.js?v=20260714-1"></script>',
               '<script src="./graph-stability-v1.js?v=20260711-4"></script>',
           ]
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>')
