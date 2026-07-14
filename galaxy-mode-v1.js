@@ -1,176 +1,23 @@
 (() => {
   let stars = null;
   let bound = false;
-
-  function currentGraph() {
-    return window.ipmGraph;
-  }
-
-  function selectElement() {
-    return document.getElementById('graphMode');
-  }
-
-  function ensureOption() {
-    const select = selectElement();
-    if (!select) return false;
-    if (!select.querySelector('option[value="galaxy"]')) {
-      const option = document.createElement('option');
-      option.value = 'galaxy';
-      option.textContent = 'Galaxy showcase';
-      select.appendChild(option);
-    }
-    return true;
-  }
-
-  function rgba(hex, alpha) {
-    if (!/^#[0-9a-f]{6}$/i.test(hex || '')) return `rgba(110,231,255,${alpha})`;
-    const n = parseInt(hex.slice(1), 16);
-    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
-  }
-
-  function glowTexture(color) {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-    const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    gradient.addColorStop(0, 'rgba(255,255,255,1)');
-    gradient.addColorStop(.12, color || '#6ee7ff');
-    gradient.addColorStop(.42, rgba(color || '#6ee7ff', .38));
-    gradient.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 128, 128);
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  function galaxyNode(node) {
-    const group = new THREE.Group();
-    const size = node.type === 'usecase' ? 17 : node.type === 'process' ? 9 : node.type === 'cluster' ? 2 : 5.5;
-    const color = node.color || '#6ee7ff';
-
-    const core = new THREE.Mesh(
-      new THREE.SphereGeometry(Math.max(1.15, size * .23), 18, 18),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .98 })
-    );
-    group.add(core);
-
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: glowTexture(color),
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    }));
-    sprite.scale.set(size, size, 1);
-    group.add(sprite);
-
-    if (node.type === 'usecase') {
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(size * .43, .2, 8, 64),
-        new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .46, blending: THREE.AdditiveBlending })
-      );
-      ring.rotation.x = Math.PI / 2.7;
-      group.add(ring);
-    }
-    return group;
-  }
-
-  function addStars() {
-    const graph = currentGraph();
-    if (stars || !graph || typeof graph.scene !== 'function') return;
-    const mobile = window.matchMedia('(max-width:620px)').matches;
-    const count = mobile ? 900 : 2400;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i += 1) {
-      const radius = 480 + Math.random() * 1500;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    stars = new THREE.Points(
-      geometry,
-      new THREE.PointsMaterial({ color: 0xb9eaff, size: 1.15, transparent: true, opacity: .48, depthWrite: false })
-    );
-    graph.scene().add(stars);
-  }
-
-  function linkRotation(link) {
-    const source = typeof link.source === 'object' ? link.source.id : link.source;
-    const target = typeof link.target === 'object' ? link.target.id : link.target;
-    const text = `${source || ''}|${target || ''}`;
-    let hash = 0;
-    for (let i = 0; i < text.length; i += 1) hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
-    return (Math.abs(hash) % 628) / 100;
-  }
-
-  function setControls(enabled) {
-    const graph = currentGraph();
-    if (!graph || typeof graph.controls !== 'function') return;
-    const controls = graph.controls();
-    controls.autoRotate = enabled;
-    controls.autoRotateSpeed = .26;
-    controls.enableDamping = true;
-    controls.dampingFactor = .07;
-  }
-
-  function apply() {
-    const select = selectElement();
-    const graph = currentGraph();
-    if (!select || !graph) return false;
-    const galaxy = select.value === 'galaxy';
-    document.body.classList.toggle('galaxy-active', galaxy);
-    setControls(galaxy);
-
-    if (galaxy) {
-      addStars();
-      graph
-        .nodeThreeObject(galaxyNode)
-        .linkWidth(link => link.hidden ? 0 : .48)
-        .linkOpacity(.3)
-        .linkCurvature(.15)
-        .linkCurveRotation(linkRotation)
-        .linkDirectionalParticles(link => link.hidden ? 0 : 1)
-        .linkDirectionalParticleWidth(1.35)
-        .linkDirectionalParticleSpeed(.004)
-        .linkDirectionalArrowLength(0);
-      const charge = graph.d3Force && graph.d3Force('charge');
-      const link = graph.d3Force && graph.d3Force('link');
-      if (charge && charge.strength) charge.strength(window.matchMedia('(max-width:620px)').matches ? -55 : -68);
-      if (link && link.distance) link.distance(item => item.hidden ? 58 : 78);
-      if (typeof graph.warmupTicks === 'function') graph.warmupTicks(100);
-      if (typeof graph.cooldownTime === 'function') graph.cooldownTime(650);
-      window.setTimeout(() => graph.zoomToFit && graph.zoomToFit(650, 110), 120);
-    } else if (typeof nodeObject === 'function') {
-      graph
-        .nodeThreeObject(nodeObject)
-        .linkWidth(link => link.width)
-        .linkOpacity(.9)
-        .linkCurvature(0)
-        .linkDirectionalParticles(link => link.particles)
-        .linkDirectionalParticleWidth(3)
-        .linkDirectionalParticleSpeed(.012)
-        .linkDirectionalArrowLength(link => link.hidden ? 0 : 6);
-    }
-    return true;
-  }
-
-  function bind() {
-    if (!ensureOption()) return;
-    const select = selectElement();
-    if (!bound) {
-      bound = true;
-      select.addEventListener('change', () => window.setTimeout(apply, 40));
-    }
-
-    let attempts = 0;
-    const timer = window.setInterval(() => {
-      attempts += 1;
-      if (apply() || attempts > 50) window.clearInterval(timer);
-    }, 100);
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
-  else bind();
+  let deepLinkApplied = false;
+  let motionPaused = localStorage.getItem('ipm-galaxy-motion-v1') !== 'running';
+  const currentGraph = () => window.ipmGraph;
+  const selectElement = () => document.getElementById('graphMode');
+  function ensureOption(){const select=selectElement();if(!select)return false;if(!select.querySelector('option[value="galaxy"]')){const option=document.createElement('option');option.value='galaxy';option.textContent='Galaxy showcase';select.append(option);}return true;}
+  function rgba(hex,alpha){if(!/^#[0-9a-f]{6}$/i.test(hex||''))return `rgba(110,231,255,${alpha})`;const n=parseInt(hex.slice(1),16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
+  function glowTexture(color){const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const ctx=canvas.getContext('2d');const gradient=ctx.createRadialGradient(64,64,0,64,64,64);gradient.addColorStop(0,'rgba(255,255,255,1)');gradient.addColorStop(.12,color||'#6ee7ff');gradient.addColorStop(.42,rgba(color||'#6ee7ff',.38));gradient.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);return new THREE.CanvasTexture(canvas);}
+  function galaxyNode(node){const group=new THREE.Group();const size=node.type==='usecase'?17:node.type==='process'?9:node.type==='cluster'?2:5.5;const color=node.color||'#6ee7ff';const core=new THREE.Mesh(new THREE.SphereGeometry(Math.max(1.15,size*.23),18,18),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.98}));group.add(core);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture(color),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));sprite.scale.set(size,size,1);group.add(sprite);if(node.type==='usecase'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*.43,.2,8,64),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.46,blending:THREE.AdditiveBlending}));ring.rotation.x=Math.PI/2.7;group.add(ring);if(typeof makeLabel==='function'){const label=makeLabel(node.label,node.type);label.position.set(0,18,0);label.scale.set(46,11.5,1);group.add(label);}}return group;}
+  function addStars(){const graph=currentGraph();if(stars||!graph||typeof graph.scene!=='function')return;const count=matchMedia('(max-width:620px)').matches?700:1800;const positions=new Float32Array(count*3);for(let i=0;i<count;i+=1){const radius=480+Math.random()*1500;const theta=Math.random()*Math.PI*2;const phi=Math.acos(2*Math.random()-1);positions[i*3]=radius*Math.sin(phi)*Math.cos(theta);positions[i*3+1]=radius*Math.sin(phi)*Math.sin(theta);positions[i*3+2]=radius*Math.cos(phi);}const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));stars=new THREE.Points(geometry,new THREE.PointsMaterial({color:0xb9eaff,size:1.05,transparent:true,opacity:.4,depthWrite:false}));graph.scene().add(stars);}
+  function linkRotation(link){const source=typeof link.source==='object'?link.source.id:link.source;const target=typeof link.target==='object'?link.target.id:link.target;const text=`${source||''}|${target||''}`;let hash=0;for(let i=0;i<text.length;i+=1)hash=((hash<<5)-hash+text.charCodeAt(i))|0;return(Math.abs(hash)%628)/100;}
+  const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setControls(galaxy){const graph=currentGraph();if(!graph||typeof graph.controls!=='function')return;const controls=graph.controls();controls.autoRotate=galaxy&&!motionPaused&&!reducedMotion();controls.autoRotateSpeed=.18;controls.enableDamping=true;controls.dampingFactor=.09;}
+  const motionButton=()=>document.getElementById('graphMotionToggle');
+  function updateMotionButton(galaxy){const button=motionButton();if(!button)return;button.hidden=!galaxy;button.dataset.paused=String(motionPaused||reducedMotion());button.textContent=motionPaused||reducedMotion()?'Resume motion':'Pause motion';button.setAttribute('aria-pressed',String(!(motionPaused||reducedMotion())));}
+  function installMotionButton(){if(motionButton())return;const group=document.querySelector('.graph-toolbar .toolbar-group');if(!group)return;const button=document.createElement('button');button.type='button';button.id='graphMotionToggle';button.hidden=true;button.addEventListener('click',()=>{if(reducedMotion())return;motionPaused=!motionPaused;localStorage.setItem('ipm-galaxy-motion-v1',motionPaused?'paused':'running');apply();});group.append(button);}
+  function applyDeepLink(){if(deepLinkApplied||!currentGraph())return;const params=new URLSearchParams(location.search);const requestedScenario=params.get('scenario');const query=params.get('q')||params.get('query');const requestedMode=params.get('mode');if(requestedMode&&['cluster','orbit','galaxy'].includes(requestedMode)){const select=selectElement();if(select&&select.value!==requestedMode){select.value=requestedMode;select.dispatchEvent(new Event('change',{bubbles:true}));}}if(requestedScenario&&['owner','roles','ids','fm'].includes(requestedScenario)){const tab=document.querySelector(`.scenario[data-scenario="${requestedScenario}"]`);if(tab&&tab.getAttribute('aria-selected')!=='true')tab.click();}if(query){const input=document.getElementById('graphSearch');if(input){input.value=query;input.dispatchEvent(new Event('input',{bubbles:true}));}}if(requestedScenario||query||requestedMode){document.getElementById('graph')?.scrollIntoView({block:'start'});setTimeout(()=>currentGraph()?.zoomToFit?.(500,90),220);}deepLinkApplied=true;}
+  function apply(){const select=selectElement();const graph=currentGraph();if(!select||!graph)return false;const galaxy=select.value==='galaxy';document.body.classList.toggle('galaxy-active',galaxy);updateMotionButton(galaxy);setControls(galaxy);if(galaxy){addStars();graph.nodeThreeObject(galaxyNode).linkWidth(link=>link.hidden?0:.48).linkOpacity(.28).linkCurvature(.12).linkCurveRotation(linkRotation).linkDirectionalParticles(link=>link.hidden?0:1).linkDirectionalParticleWidth(1.1).linkDirectionalParticleSpeed(.0028).linkDirectionalArrowLength(0);const charge=graph.d3Force&&graph.d3Force('charge');const link=graph.d3Force&&graph.d3Force('link');if(charge&&charge.strength)charge.strength(matchMedia('(max-width:620px)').matches?-52:-64);if(link&&link.distance)link.distance(item=>item.hidden?58:82);graph.d3VelocityDecay?.(.42);graph.warmupTicks?.(120);graph.cooldownTicks?.(90);graph.cooldownTime?.(900);setTimeout(()=>graph.zoomToFit?.(600,110),100);}else if(typeof nodeObject==='function'){graph.nodeThreeObject(nodeObject).linkWidth(link=>link.width).linkOpacity(.62).linkCurvature(link=>link.hidden?0:.075).linkCurveRotation(linkRotation).linkDirectionalParticles(link=>link.particles).linkDirectionalParticleWidth(link=>link.particles>1?1.15:.72).linkDirectionalParticleSpeed(.0035).linkDirectionalArrowLength(0);graph.d3VelocityDecay?.(.3);}applyDeepLink();return true;}
+  function bind(){if(!ensureOption())return;installMotionButton();const select=selectElement();if(!bound){bound=true;select.addEventListener('change',()=>setTimeout(apply,40));document.getElementById('graph3d')?.addEventListener('pointerdown',()=>{if(select.value!=='galaxy'||motionPaused)return;motionPaused=true;localStorage.setItem('ipm-galaxy-motion-v1','paused');apply();},{passive:true});}let attempts=0;const timer=setInterval(()=>{attempts+=1;if(apply()||attempts>60)clearInterval(timer);},100);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
