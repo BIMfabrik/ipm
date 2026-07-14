@@ -1,9 +1,11 @@
 (() => {
   const MODEL_URL = './information-acceptance.bpmn';
   const mainPath = [
-    'StartEvent_1', 'Task_DefineRequirement', 'Task_ConfigureUseCase',
-    'Task_AssignProcess', 'Task_ExecuteProcess', 'Task_ProduceEvidence',
-    'Task_ReviewEvidence', 'Gateway_Accepted', 'Task_RecordAcceptance', 'EndEvent_1'
+    'StartEvent_1', 'Task_DefineRequirement', 'Flow_1',
+    'Task_ConfigureUseCase', 'Flow_2', 'Task_AssignProcess', 'Flow_3',
+    'Task_ExecuteProcess', 'Flow_4', 'Task_ProduceEvidence', 'Flow_5',
+    'Task_ReviewEvidence', 'Flow_6', 'Gateway_Accepted', 'Flow_7',
+    'Flow_8', 'Task_RecordAcceptance', 'Flow_11', 'EndEvent_1'
   ];
   const reworkPath = ['Task_CorrectDelivery', 'Flow_9', 'Flow_10'];
   let viewer;
@@ -40,7 +42,9 @@
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
+    document.body.append(link);
     link.click();
+    link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
@@ -77,17 +81,18 @@
     if (!canvasHost) return;
     bindControls();
 
-    if (typeof window.BpmnJS !== 'function') {
-      setStatus('BPMN viewer library could not be loaded.', 'error');
-      canvasHost.innerHTML = '<div class="bpmn-error">The interactive BPMN viewer is unavailable. The BPMN file can still be downloaded.</div>';
-      return;
-    }
-
     try {
       setStatus('Loading BPMN 2.0 process…');
       const response = await fetch(MODEL_URL, { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       xml = await response.text();
+
+      if (typeof window.BpmnJS !== 'function') {
+        setStatus('Interactive viewer unavailable · BPMN download remains available', 'error');
+        canvasHost.innerHTML = '<div class="bpmn-error"><strong>Interactive viewer unavailable</strong><span>The portable BPMN 2.0 process can still be downloaded from the toolbar.</span></div>';
+        return;
+      }
+
       viewer = new window.BpmnJS({ container: canvasHost });
       const result = await viewer.importXML(xml);
       viewer.get('canvas').zoom('fit-viewport');
