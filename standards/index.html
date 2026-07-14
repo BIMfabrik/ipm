@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Configure Swiss BIM information requirements, standards mappings and live project evidence.">
+  <title>Swiss Standards Layer · IPM</title>
+  <link rel="stylesheet" href="../ui-system.css?v=20260714-4">
+  <link rel="stylesheet" href="./standards.css?v=20260714-1">
+  <script src="../theme.js"></script>
+  <script src="./standards.js" defer></script>
+</head>
+<body>
+  <div class="shell standards-shell">
+    <nav class="nav">
+      <a class="brand" href="../"><span class="mark"></span><span>IPM Swiss Layer</span></a>
+      <div class="navlinks"></div>
+    </nav>
+
+    <header class="hero standards-hero">
+      <span class="kicker">Swiss implementation workbench · Beta</span>
+      <h1>Turn standards into a project-specific information order.</h1>
+      <p class="lead">Connect Swiss guidance, ISO information management, LOIN, CRB classifications, Basis-AIR, IFC and IDS to responsible people, evidence and accepted project outcomes.</p>
+      <div class="standards-actions">
+        <a class="standards-button primary" href="#assessment">Start project assessment <span>→</span></a>
+        <a class="standards-button" href="#catalogue">Browse standards layer</a>
+      </div>
+      <div class="legal-note"><strong>Reference layer:</strong> IPM stores metadata, mappings and project interpretations. Protected standards and licensed CRB datasets are not reproduced.</div>
+    </header>
+
+    <main>
+      <section class="standards-thesis">
+        <div>
+          <span class="standards-label">Product direction</span>
+          <h2>Not another BIM diagram. An executable decision chain.</h2>
+          <p>The graph remains the explanation layer. The workbench makes it operational: select an outcome, derive use cases and information needs, assign responsibility, generate checks and record acceptance evidence.</p>
+        </div>
+        <div class="execution-chain" aria-label="Implementation chain">
+          <span>Outcome</span><i>→</i><span>Use case</span><i>→</i><span>AIR / EIR</span><i>→</i><span>LOIN</span><i>→</i><span>IFC / IDS</span><i>→</i><span>Evidence</span><i>→</i><span>Operation</span>
+        </div>
+      </section>
+
+      <section class="standards-section" id="assessment">
+        <header class="standards-section-head">
+          <div><span class="standards-label">Live project usage</span><h2>Project implementation assessment</h2></div>
+          <p>Saved locally in this browser. Export the structured assessment as JSON for review or later integration with a database.</p>
+        </header>
+
+        <div class="assessment-layout">
+          <section class="assessment-panel">
+            <div class="form-grid">
+              <label><span>Project name</span><input id="projectName" type="text" placeholder="e.g. Campus Mitte – BIM2FM"></label>
+              <label><span>Project phase</span><select id="projectPhase"><option>Strategy</option><option>Briefing</option><option>Design</option><option>Procurement</option><option>Construction</option><option>Handover</option><option>Operation</option></select></label>
+              <label><span>Asset type</span><select id="assetType"><option>Building</option><option>Infrastructure</option><option>Portfolio</option><option>Healthcare</option><option>Education</option><option>Workplace</option><option>Other</option></select></label>
+              <label><span>Assessment owner</span><input id="assessmentOwner" type="text" placeholder="Name or role"></label>
+            </div>
+            <div class="template-row">
+              <label for="templateSelect">Start from template</label>
+              <select id="templateSelect"><option value="">Choose a project scenario…</option></select>
+              <button id="applyTemplate" type="button">Apply</button>
+            </div>
+          </section>
+
+          <aside class="score-panel">
+            <span class="standards-label">Implementation readiness</span>
+            <strong id="readinessScore">0%</strong>
+            <div class="score-track"><span id="scoreBar"></span></div>
+            <p id="scoreSummary">Assess the relevant layers to create a project baseline.</p>
+            <dl>
+              <div><dt>Applicable</dt><dd id="applicableCount">0</dd></div>
+              <div><dt>Verified</dt><dd id="verifiedCount">0</dd></div>
+              <div><dt>Open actions</dt><dd id="openCount">0</dd></div>
+            </dl>
+          </aside>
+        </div>
+
+        <div class="assessment-toolbar">
+          <div class="filter-group">
+            <label for="categoryFilter">Category</label>
+            <select id="categoryFilter"><option value="">All categories</option></select>
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter"><option value="">All statuses</option><option>Not assessed</option><option>Not applicable</option><option>Applicable</option><option>In progress</option><option>Implemented</option><option>Verified</option></select>
+          </div>
+          <div class="assessment-actions">
+            <button id="resetAssessment" type="button">Reset</button>
+            <label class="import-button">Import JSON<input id="importFile" type="file" accept="application/json" hidden></label>
+            <button id="exportAssessment" class="primary" type="button">Export JSON</button>
+          </div>
+        </div>
+
+        <div class="assessment-table-wrap">
+          <table class="assessment-table">
+            <thead><tr><th>Layer</th><th>Access</th><th>Status</th><th>Responsible</th><th>Evidence / next action</th><th>Source</th></tr></thead>
+            <tbody id="assessmentRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="standards-section" id="catalogue">
+        <header class="standards-section-head">
+          <div><span class="standards-label">Standards and services</span><h2>Swiss implementation stack</h2></div>
+          <p>IPM should connect these sources rather than duplicate them. Open standards can be implemented directly; licensed sources require authorised imports or connectors.</p>
+        </header>
+        <div id="catalogueGrid" class="catalogue-grid"></div>
+      </section>
+
+      <section class="standards-section differentiation">
+        <header class="standards-section-head">
+          <div><span class="standards-label">Why it can stand out</span><h2>The missing layer is execution.</h2></div>
+        </header>
+        <div class="differentiation-grid">
+          <article><span>01</span><h3>Standards-aware</h3><p>Every requirement points to its framework, source, applicability and licensing status.</p></article>
+          <article><span>02</span><h3>Project-specific</h3><p>Generic Swiss baselines become a focused information order for one asset, phase and outcome.</p></article>
+          <article><span>03</span><h3>Machine-checkable</h3><p>Approved requirements resolve to IFC, bSDD and IDS rather than remaining narrative text.</p></article>
+          <article><span>04</span><h3>Evidence-based</h3><p>The graph shows not only what should happen, but whether it was delivered, checked and accepted.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><span>IPM Swiss Standards Layer</span><span>Reference metadata · project implementation · live evidence</span></footer>
+  </div>
+</body>
+</html>
