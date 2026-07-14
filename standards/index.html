@@ -6,9 +6,14 @@
   <meta name="description" content="Configure Swiss BIM information requirements, standards mappings and live project evidence.">
   <title>Swiss Standards Layer · IPM</title>
   <link rel="stylesheet" href="../ui-system.css?v=20260714-4">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.21.0/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.21.0/dist/assets/bpmn-js.css">
   <link rel="stylesheet" href="./standards.css?v=20260714-1">
+  <link rel="stylesheet" href="./bpmn-flow.css?v=20260714-1">
   <script src="../theme.js"></script>
+  <script src="https://unpkg.com/bpmn-js@18.21.0/dist/bpmn-navigated-viewer.production.min.js" defer></script>
   <script src="./standards.js" defer></script>
+  <script src="./bpmn-flow.js?v=20260714-1" defer></script>
 </head>
 <body>
   <div class="shell standards-shell">
@@ -23,6 +28,7 @@
       <p class="lead">Connect Swiss guidance, ISO information management, LOIN, CRB classifications, Basis-AIR, IFC and IDS to responsible people, evidence and accepted project outcomes.</p>
       <div class="standards-actions">
         <a class="standards-button primary" href="#assessment">Start project assessment <span>→</span></a>
+        <a class="standards-button" href="#bpmn">View BPMN process</a>
         <a class="standards-button" href="#catalogue">Browse standards layer</a>
       </div>
       <div class="legal-note"><strong>Reference layer:</strong> IPM stores metadata, mappings and project interpretations. Protected standards and licensed CRB datasets are not reproduced.</div>
@@ -37,6 +43,49 @@
         </div>
         <div class="execution-chain" aria-label="Implementation chain">
           <span>Outcome</span><i>→</i><span>Use case</span><i>→</i><span>AIR / EIR</span><i>→</i><span>LOIN</span><i>→</i><span>IFC / IDS</span><i>→</i><span>Evidence</span><i>→</i><span>Operation</span>
+        </div>
+      </section>
+
+      <section class="standards-section" id="bpmn">
+        <header class="standards-section-head">
+          <div><span class="standards-label">BPMN 2.0 process view</span><h2>Requirement to accepted information</h2></div>
+          <p>A formal process model with explicit responsibility, information objects, evidence review and a correction loop. Select any BPMN element to inspect its purpose.</p>
+        </header>
+
+        <div class="bpmn-workbench" data-ui-component="process-viewer">
+          <div class="bpmn-toolbar" aria-label="BPMN viewer controls">
+            <div class="bpmn-toolbar__group">
+              <button id="bpmnFit" type="button">Fit</button>
+              <button id="bpmnZoomOut" type="button" aria-label="Zoom out">−</button>
+              <button id="bpmnZoomIn" type="button" aria-label="Zoom in">+</button>
+            </div>
+            <span id="bpmnStatus" class="bpmn-status" role="status">Preparing BPMN viewer…</span>
+            <div class="bpmn-toolbar__group">
+              <button id="bpmnDownloadSvg" type="button">Download SVG</button>
+              <button id="bpmnDownload" type="button">Download BPMN</button>
+            </div>
+          </div>
+
+          <div class="bpmn-layout">
+            <div id="bpmnCanvas" class="bpmn-canvas" aria-label="Interactive BPMN diagram showing the requirement-to-acceptance process"></div>
+            <aside class="bpmn-inspector" aria-live="polite">
+              <span class="standards-label">Selected BPMN element</span>
+              <p id="bpmnSelectionType">Process step</p>
+              <h3 id="bpmnSelectionTitle">Define and approve requirement</h3>
+              <p id="bpmnSelectionDescription">Select any task, event, gateway or information object in the diagram to inspect its role.</p>
+              <dl>
+                <div><dt>Element</dt><dd id="bpmnSelectionId">Task_DefineRequirement</dd></div>
+                <div><dt>Notation</dt><dd>BPMN 2.0</dd></div>
+                <div><dt>Mode</dt><dd>Read-only process view</dd></div>
+              </dl>
+            </aside>
+          </div>
+
+          <div class="bpmn-legend" aria-label="BPMN process legend">
+            <span><i></i> Primary delivery and acceptance path</span>
+            <span class="rework"><i></i> Rejected delivery and correction path</span>
+            <span class="object"><i></i> Requirement, use case, evidence or acceptance object</span>
+          </div>
         </div>
       </section>
 
