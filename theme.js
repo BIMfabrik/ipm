@@ -58,7 +58,42 @@
   function installToggle(){if(document.getElementById('themeToggle')||document.querySelector('.ui-theme-toggle'))return;const nav=document.querySelector('.nav');if(!nav)return;const host=nav.querySelector('.navlinks')||nav.querySelector(':scope > div')||nav;const group=document.createElement('div');group.className='ui-theme-toggle';group.dataset.uiComponent='theme-toggle';group.setAttribute('role','group');group.setAttribute('aria-label','Appearance');[['system','System','S'],['light','Light','L'],['dark','Dark','D']].forEach(([value,label,shortLabel])=>{const button=document.createElement('button');button.type='button';button.dataset.uiTheme=value;button.textContent=label;button.setAttribute('aria-label',`${label} theme`);button.setAttribute('title',`${label} theme (${shortLabel})`);button.onclick=()=>apply(value);group.append(button);});host.append(group);apply(choice,false);}
   function installComponentContracts(){document.documentElement.dataset.uiComponent='theme-provider';document.querySelectorAll('#themeToggle,.ui-theme-toggle').forEach(node=>node.dataset.uiComponent='theme-toggle');document.querySelectorAll('.page-header,header.hero').forEach(node=>node.dataset.uiComponent='page-header');document.querySelectorAll('.graph-toolbar,.toolbar').forEach(node=>node.dataset.uiComponent='map-toolbar');document.querySelectorAll('.source-note').forEach(node=>node.dataset.uiComponent='source-note');}
   function installKnowledgeEnhancements(){const {inKnowledge,inArticle}=routeInfo();if(!inKnowledge||document.querySelector('[data-ipm-knowledge-enhancement]'))return;const base=inArticle?'../':'./';const style=document.createElement('link');style.rel='stylesheet';style.href=`${base}series.css?v=20260714-1`;style.dataset.ipmKnowledgeEnhancement='style';document.head.append(style);const script=document.createElement('script');script.src=`${base}series.js?v=20260714-1`;script.defer=true;script.dataset.ipmKnowledgeEnhancement='script';document.head.append(script);}
-  function installUi(){installSidebar();installNavigation();installToggle();installComponentContracts();installKnowledgeEnhancements();}
+  function installProductStatus() {
+    const { root } = routeInfo();
+    document.documentElement.dataset.productStatus = 'beta';
+    if (!document.querySelector('link[data-ipm-product-status]')) {
+      const style = document.createElement('link');
+      style.rel = 'stylesheet';
+      style.href = `${root}product-status.css?v=20260714-1`;
+      style.dataset.ipmProductStatus = 'true';
+      document.head.append(style);
+    }
+    if (!/beta/i.test(document.title)) document.title = `${document.title} · Beta`;
+    const brand = document.querySelector('.dashboard-sidebar__brand');
+    if (brand && !brand.querySelector('.product-status-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'product-status-badge dashboard-sidebar__label';
+      badge.textContent = 'Beta';
+      badge.title = 'Public beta · Work in progress';
+      brand.append(badge);
+    }
+    const anchor = document.querySelector('.topbar, .nav');
+    if (anchor && !document.querySelector('.product-status-notice')) {
+      const notice = document.createElement('aside');
+      notice.className = 'product-status-notice';
+      notice.setAttribute('aria-label', 'Product status');
+      notice.innerHTML = `<div class="product-status-notice__message"><span class="product-status-badge">Beta</span><strong>Work in progress</strong><span class="product-status-notice__copy">This public prototype is under active development. Content, standards mappings, readiness scores and generated outputs are not final or contractual.</span></div><span class="product-status-version">Evaluation release · July 2026</span>`;
+      anchor.insertAdjacentElement('afterend', notice);
+    }
+    document.querySelectorAll('.footer').forEach(footer => {
+      if (footer.querySelector('.product-status-footer')) return;
+      const status = document.createElement('span');
+      status.className = 'product-status-footer';
+      status.innerHTML = '<span class="product-status-badge">Beta</span><span>Work in progress</span>';
+      footer.append(status);
+    });
+  }
+  function installUi(){installSidebar();installNavigation();installToggle();installComponentContracts();installKnowledgeEnhancements();installProductStatus();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installUi);else installUi();
   media.addEventListener('change',()=>{if(choice==='system')apply('system',false);});
 })();
