@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "name": "IPM Swiss Standards Layer",
+    "version": "0.1.0",
+    "updated": "2026-07-14",
+    "notice": "Reference metadata and implementation guidance only. Licensed standards are not reproduced."
+  },
+  "layers": [
+    {
+      "id": "iso19650",
+      "category": "Information management",
+      "title": "SN EN ISO 19650 family",
+      "short": "Information-management backbone across delivery and operation.",
+      "publisher": "ISO / SNV",
+      "access": "licensed",
+      "source": "https://www.iso.org/standard/68078.html",
+      "supports": ["governance", "requirements", "roles", "delivery", "operation"],
+      "outputs": ["OIR / AIR / PIR", "EIR", "BEP", "MIDP / TIDP", "PIM / AIM"],
+      "implementation": "Use as the governing process model. IPM stores project interpretations, responsibilities, exchanges and evidence—not the protected norm text."
+    },
+    {
+      "id": "loin",
+      "category": "Information need",
+      "title": "SN EN 17412-1 and Swiss LOIN guidance",
+      "short": "Defines why, when, by whom and at what information depth data is needed.",
+      "publisher": "CEN / SNV · BdCH/bSCH",
+      "access": "mixed",
+      "source": "https://bauen-digital.ch/publikationen/",
+      "supports": ["requirements", "geometry", "alphanumeric", "documentation", "milestones"],
+      "outputs": ["LOIN matrix", "milestone requirements", "discipline delivery view"],
+      "implementation": "Model purpose, milestone, actor, object scope, geometry, alphanumeric information and documentation as separate fields."
+    },
+    {
+      "id": "bam",
+      "category": "Project delivery",
+      "title": "BIM-Abwicklungsmodell Schweiz",
+      "short": "Common lifecycle and role understanding for client, planner, contractor and operator.",
+      "publisher": "Bauen digital Schweiz / buildingSMART Switzerland",
+      "access": "guidance",
+      "source": "https://bauen-digital.ch/publikationen/",
+      "supports": ["phases", "roles", "processes", "handover"],
+      "outputs": ["project process map", "role view", "handover gates"],
+      "implementation": "Use as the navigation spine for phase-based views and project gates."
+    },
+    {
+      "id": "ucm",
+      "category": "Use cases",
+      "title": "buildingSMART Use Case Management",
+      "short": "Structured international method and library for BIM use cases and information exchanges.",
+      "publisher": "buildingSMART International",
+      "access": "service",
+      "source": "https://ucm.buildingsmart.org/en",
+      "supports": ["usecases", "idm", "processes", "exchange requirements"],
+      "outputs": ["use-case definition", "process map", "exchange requirements"],
+      "implementation": "Link or import canonical use cases instead of rebuilding a competing catalogue. IPM differentiates through Swiss project configuration and execution."
+    },
+    {
+      "id": "basis-air",
+      "category": "Asset information",
+      "title": "CRB Basis-AIR",
+      "short": "Shared Swiss baseline for operational asset information requirements.",
+      "publisher": "CRB and BIM-Roundtable Schweiz",
+      "access": "request",
+      "source": "https://www.crb.ch/de/normen-standards/facility-management/basis-air",
+      "supports": ["air", "assets", "operation", "handover"],
+      "outputs": ["baseline AIR", "project-specific AIR", "FM acceptance matrix"],
+      "implementation": "Import licensed/authorised source rows, then extend them with client- and project-specific requirements, responsible roles and evidence."
+    },
+    {
+      "id": "bim2fm",
+      "category": "Asset information",
+      "title": "Swiss BIM2FM data-field catalogue",
+      "short": "Ordering aid for information required at FM handover.",
+      "publisher": "Bauen digital Schweiz / buildingSMART Switzerland",
+      "access": "guidance",
+      "source": "https://bauen-digital.ch/publikationen/",
+      "supports": ["fm", "attributes", "handover", "acceptance"],
+      "outputs": ["FM data-field catalogue", "handover checklist", "CAFM import scope"],
+      "implementation": "Map each field to asset type, FM process, source system, milestone, validation rule and target CAFM field."
+    },
+    {
+      "id": "ebkp-ifc",
+      "category": "Classification and cost",
+      "title": "CRB eBKP-H / eBKP-T – IFC rules",
+      "short": "Swiss mapping between element-based cost structures and IFC entities.",
+      "publisher": "CRB",
+      "access": "licensed",
+      "source": "https://www.crb.ch/de/normen-standards/baukostenplane/regelsatz-ebkp-ifc",
+      "supports": ["classification", "ifc", "cost", "quantities"],
+      "outputs": ["eBKP classification view", "model-based quantities", "cost-check scope"],
+      "implementation": "Treat the CRB mapping as a licensed connector. Store stable references and project assignments, not copied proprietary datasets."
+    },
+    {
+      "id": "ifc",
+      "category": "Open standards",
+      "title": "IFC 4 / IFC 4.3",
+      "short": "Open, software-neutral schema for exchanging built-asset information.",
+      "publisher": "buildingSMART International",
+      "access": "open",
+      "source": "https://ifc43-docs.standards.buildingsmart.org/",
+      "supports": ["entities", "properties", "relations", "geometry", "systems"],
+      "outputs": ["IFC mapping", "model exchange definition", "validation target"],
+      "implementation": "Resolve every machine-checkable requirement to IFC entity, predefined type, classification, property and value constraints."
+    },
+    {
+      "id": "ids",
+      "category": "Open standards",
+      "title": "Information Delivery Specification 1.0",
+      "short": "Machine-readable specification for IFC information requirements and validation.",
+      "publisher": "buildingSMART International",
+      "access": "open",
+      "source": "https://github.com/buildingSMART/IDS",
+      "supports": ["checking", "ifc", "requirements", "acceptance"],
+      "outputs": ["IDS file", "validation report", "acceptance evidence"],
+      "implementation": "Generate IDS only from approved requirements. Validate generated files against the official schema and an independent checker before release."
+    },
+    {
+      "id": "bsdd",
+      "category": "Open standards",
+      "title": "buildingSMART Data Dictionary",
+      "short": "Stable multilingual identifiers for classes, properties and terminology.",
+      "publisher": "buildingSMART International",
+      "access": "service",
+      "source": "https://search.bsdd.buildingsmart.org/uri",
+      "supports": ["terminology", "classification", "properties", "multilingual"],
+      "outputs": ["stable URI mappings", "terminology view", "property dictionary"],
+      "implementation": "Use bSDD URIs as semantic anchors while retaining Swiss labels and project aliases."
+    },
+    {
+      "id": "evidence",
+      "category": "Project execution",
+      "title": "Live evidence and acceptance layer",
+      "short": "Project-specific implementation state, evidence, exceptions and approvals.",
+      "publisher": "IPM",
+      "access": "native",
+      "source": "../#graph",
+      "supports": ["status", "evidence", "exceptions", "approval", "audit"],
+      "outputs": ["readiness score", "open actions", "decision log", "acceptance record"],
+      "implementation": "This is the differentiator: connect standards and requirements to actual project owners, dates, evidence, checks and accepted outcomes."
+    }
+  ],
+  "templates": [
+    {
+      "id": "owner-order",
+      "title": "Owner information order",
+      "description": "From organisational outcomes to project exchanges and acceptance.",
+      "layers": ["iso19650", "bam", "ucm", "loin", "ids", "evidence"]
+    },
+    {
+      "id": "bim2fm-ready",
+      "title": "BIM2FM operational readiness",
+      "description": "Define, deliver and verify information needed for operation.",
+      "layers": ["iso19650", "basis-air", "bim2fm", "loin", "ifc", "ids", "bsdd", "evidence"]
+    },
+    {
+      "id": "model-quality",
+      "title": "IFC model quality and acceptance",
+      "description": "Turn project rules into testable, traceable acceptance evidence.",
+      "layers": ["ucm", "loin", "ifc", "ids", "bsdd", "evidence"]
+    },
+    {
+      "id": "cost-planning",
+      "title": "Swiss model-based cost planning",
+      "description": "Connect use cases and IFC objects to eBKP-based quantity and cost views.",
+      "layers": ["bam", "ucm", "loin", "ebkp-ifc", "ifc", "evidence"]
+    }
+  ]
+}
