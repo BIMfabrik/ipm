@@ -1,0 +1,114 @@
+:root {
+  --product-status-accent: var(--warning, #b7791f);
+}
+
+.product-status-badge {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in oklch, var(--product-status-accent) 42%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--product-status-accent) 10%, var(--surface));
+  color: color-mix(in oklch, var(--product-status-accent) 72%, var(--foreground));
+  padding: 2px 7px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dashboard-sidebar__brand .product-status-badge {
+  margin-left: 1px;
+}
+
+.product-status-notice {
+  display: flex;
+  width: min(96rem, calc(100% - 48px));
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 12px auto 0;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--product-status-accent);
+  border-radius: var(--radius);
+  background: var(--surface-subtle);
+  padding: 9px 12px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.shell > .product-status-notice {
+  width: auto;
+  margin-inline: 0;
+}
+
+.product-status-notice__message {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-status-notice strong {
+  flex: 0 0 auto;
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.product-status-notice__copy {
+  min-width: 0;
+}
+
+.product-status-version {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.product-status-footer {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+@media (max-width: 900px) {
+  .product-status-notice {
+    width: min(100% - 32px, 88rem);
+  }
+
+  .shell > .product-status-notice {
+    width: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-status-notice {
+    width: min(100% - 24px, 88rem);
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .shell > .product-status-notice {
+    width: auto;
+  }
+
+  .product-status-notice__message {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .product-status-notice__copy {
+    flex-basis: 100%;
+  }
+}
